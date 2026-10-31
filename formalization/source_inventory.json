@@ -1,0 +1,1420 @@
+{
+  "source": "../STOC2027.tex",
+  "sha256": "b446db65a769b69d0968eaef6d9366ba94e14faa6c3fa7769348bd1f4c53b23a",
+  "statements": [
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:main"
+      ],
+      "start_line": 336,
+      "end_line": 350,
+      "statement": "\\begin{theorem}\\label{thm:main}\nLet\n$n\\geq2$, $0<\\gamma\\leq 1/4$, $0<\\varepsilon\\leq 1$, and\n$0<\\delta,\\beta<1/10$.  There is an $(\\varepsilon, \\delta)$ edge-DP algorithm that, on every\nnonnegative weighted $n$-vertex graph $G$, runs in time polynomial in\n$n$, $1/\\gamma$, $1/\\varepsilon$, $\\log(1/\\delta)$, and $\\log(1/\\beta)$, and outputs a\nnonnegative weighted graph $\\widetilde{G}$ satisfying, with probability at least $1-\\beta$, simultaneously\nfor every $S\\subseteq V$,\n\\begin{align*}\n \\left|w_G(S,V\\setminus S)-w_{\\widetilde{G}}(S,V\\setminus S)\\right|\n \\leq \\gamma w_G(S,V\\setminus S)  + O\\left(\\frac{n}{\\gamma\\varepsilon}\n \\left(\\log(n/(\\delta\\beta\\gamma\\eps))\\right)^{7}\\right) .\n\\end{align*}\n\\end{theorem}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "restatable",
+      "labels": [
+        "cor:cc-intro"
+      ],
+      "start_line": 490,
+      "end_line": 498,
+      "statement": "\\begin{restatable}[Private correlation clustering]{corollary}{privatecorrelationclustering}\n\\label{cor:cc-intro}\nFor every constant $\\varepsilon>0$ and $\\delta=n^{-10}$, there is a\npolynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm for unweighted complete-graph min-disagree\ncorrelation clustering that, with high probability, outputs a partition with cost at most\n\\[\n1.387\\operatorname{OPT}_G+\\widetilde O_{\\varepsilon}(n).\n\\]\n\\end{restatable}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "restatable",
+      "labels": [
+        "cor:maxcut-intro"
+      ],
+      "start_line": 510,
+      "end_line": 517,
+      "statement": "\\begin{restatable}[Private Max-Cut]{corollary}{privatemaxcut}\n\\label{cor:maxcut-intro}\nFor every constant $\\xi>0, \\varepsilon>0$, and $\\delta=n^{-10}$, there is a polynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm for Max-Cut that, for any non-negative weighted graph $G$, with high probability outputs a bipartition with cut value at least\n\\[\n(0.878-\\xi)\\operatorname{OPT}_G-\\widetilde O_{\\xi,\\varepsilon}(n).\n\\]\nHere, $\\operatorname{OPT}_G$ is the value of the real max-cut in $G$.\n\\end{restatable}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "definition",
+      "labels": [
+        "def:DP"
+      ],
+      "start_line": 1458,
+      "end_line": 1470,
+      "statement": "\\begin{definition}\n\\label{def:DP}\nConsider histograms $w,w' \\in \\R_{\\geq0}^{\\binom{n}{2}}$.\nWe say that histograms $w,w'$ are adjacent, written $w\\sim w'$, if\n$\\norm{w-w'}_1\\leq1$.\nA randomized algorithm $\\cM$ is $(\\varepsilon, \\delta)$ edge-DP if for\nall adjacent $w,w'$ and measurable output events $A$,\n\\[\n \\Prb[\\cM(w)\\in A]\\leq e^\\varepsilon\\Prb[\\cM(w')\\in A]+\\delta,\n\\]\nand symmetrically with $w,w'$ exchanged.\n\\end{definition}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "definition",
+      "labels": [
+        "def:laplace-dist"
+      ],
+      "start_line": 1490,
+      "end_line": 1497,
+      "statement": "\\begin{definition}[Laplace Distribution]\n\\label{def:laplace-dist}\nThe centered Laplace distribution with scale parameter $b > 0$, denoted as $\\text{Lap}(b)$, is a continuous probability distribution with the probability density function\n\\[\n    h(z) = \\frac{1}{2b} \\exp\\left(-\\frac{|z|}{b}\\right), \\quad z \\in \\mathbb{R}.\n\\]\nIf $Z \\sim \\text{Lap}(b)$, then $\\Prb[|Z| \\ge t] = \\exp\\left(-\\frac{t}{b}\\right)$ for $t\\geq 0$.\n\\end{definition}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:laplace-mech"
+      ],
+      "start_line": 1521,
+      "end_line": 1528,
+      "statement": "\\begin{lemma}[Laplace Mechanism]\n\\label{lem:laplace-mech}\nLet $f \\colon \\mathcal{X} \\to \\mathbb{R}^k$ be a function with $\\ell_1$-sensitivity $\\Delta_1 f = \\max_{x \\sim x'} \\|f(x) - f(x')\\|_1$. For any $\\varepsilon > 0$, the Laplace mechanism $\\mathcal{M}_L$ defined by\n\\[\n    \\mathcal{M}_L(x) = f(x) + (Z_1, \\dots, Z_k),\n\\]\nwhere $Z_1, \\dots, Z_k$ are drawn i.i.d. from $\\text{Lap}(\\Delta_1 f / \\varepsilon)$, satisfies $\\varepsilon$-differential privacy.\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:post-processing"
+      ],
+      "start_line": 1530,
+      "end_line": 1533,
+      "statement": "\\begin{lemma}[Post-Processing]\n\\label{lem:post-processing}\nLet $\\mathcal{M} \\colon \\mathcal{X} \\to \\mathcal{Y}$ be a randomized mechanism that is $(\\varepsilon, \\delta)$-differentially private. Let $f \\colon \\mathcal{Y} \\to \\mathcal{Z}$ be an arbitrary randomized mapping whose internal randomness is independent of the private input data. Then the composite mechanism $f \\circ \\mathcal{M} \\colon \\mathcal{X} \\to \\mathcal{Z}$ remains $(\\varepsilon, \\delta)$-differentially private.\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:basic-composition"
+      ],
+      "start_line": 1535,
+      "end_line": 1538,
+      "statement": "\\begin{lemma}[Basic Adaptive Composition]\n\\label{lem:basic-composition}\nLet $\\mathcal{M}_1, \\dots, \\mathcal{M}_k$ be a sequence of adaptively chosen randomized mechanisms, where for each $i \\in [k]$, the mechanism $\\mathcal{M}_i$ is $(\\varepsilon_i, \\delta_i)$-differentially private. Then their adaptive composition is $\\left( \\sum_{i=1}^k \\varepsilon_i, \\sum_{i=1}^k \\delta_i \\right)$-differentially private.\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:advanced-composition"
+      ],
+      "start_line": 1540,
+      "end_line": 1546,
+      "statement": "\\begin{lemma}[Advanced Adaptive Composition~\\cite{DRV10,DR14}]\n\\label{lem:advanced-composition}\nLet $\\mathcal{M}_1, \\dots, \\mathcal{M}_k$ be a sequence of adaptively chosen randomized mechanisms, where, conditional on every fixed preceding transcript, each $\\mathcal{M}_i$ is $(\\varepsilon_0, \\delta_0)$-differentially private for some $\\varepsilon_0 > 0$ and $\\delta_0 \\ge 0$. Then for any $\\delta'\\in(0,1)$, the adaptive composition of these $k$ mechanisms is $(\\varepsilon, k\\delta_0 + \\delta')$-differentially private, where\n$$\n   \\varepsilon = \\varepsilon_0 \\sqrt{2k \\ln(1/\\delta')} + k \\varepsilon_0 (e^{\\varepsilon_0} - 1).\n$$\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "DR14",
+        "DRV10"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:chi"
+      ],
+      "start_line": 2003,
+      "end_line": 2007,
+      "statement": "\\begin{lemma}\\label{lem:chi}\nFor every fixed $X \\in \\mathcal{X}$, choose independent random vectors $Z^{(j)}\\sim \\mathcal{N}(0,X)$ for each $j=1,\\dots,k$. Set $\\overline g(u,v)=\\frac1k\\sum_{j=1}^k\\frac{(Z_u^{(j)}-Z_v^{(j)})^2}{4},$ and $\\hat g(u,v)=\\min\\{\\overline{g}(u,v)/2,1\\}$. For some universal constant $C > 0$, if\n$k\\geq C\\log(n/(\\beta_\\chi\\del_1))$, then with probability at least $1-\\min(\\beta_\\chi, \\del_1)$, for every pair of nodes $e=\\{u,v\\}$ simultaneously,\n\\[\\frac{q_{e}(X)}{4}\\leq \\hat{g}(u,v)\\leq q_{e}(X).\\]\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:chaos"
+      ],
+      "start_line": 2011,
+      "end_line": 2017,
+      "statement": "\\begin{lemma}\\label{lem:chaos}\nFor every fixed $D \\in \\mathbb{R}^{\\binom{n}{2}}$ and $X \\in \\mathcal{X}$, choose independent random vectors $Z^{(j)}\\sim \\mathcal{N}(0,X)$ for each $j=1,\\dots,k$. Set $\\overline g(u,v)=\\frac1k\\sum_{j=1}^k\\frac{(Z_u^{(j)}-Z_v^{(j)})^2}{4},$ and $\\hat g(u,v)=\\min\\{\\overline{g}(u,v)/2,1\\}$.  For some universal constant $C > 0$, if\n$k\\geq C\\log(n/(\\beta_\\chi\\del_1))$, for a universal constant $c_0>0$, conditioning on the good event in Lemma~\\ref{lem:chi},\n\\[\n \\Prb\\left[\\langle D,\\hat{g}\\rangle\\geq\\frac{1}{2}\\sum_{e=\\{u,v\\} \\in \\binom{n}{2}} D_{uv} q_{e}(X)\\right]\\geq c_0.\n\\]\n\\end{lemma}",
+      "references": [
+        "lem:chi"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:preprocess"
+      ],
+      "start_line": 2189,
+      "end_line": 2195,
+      "statement": "\\begin{lemma}\\label{lem:preprocess}\nFix any $\\eps_0, \\beta_0, \\gamma \\in (0, 1)$, and $n$-vertex input graph $G$ with edge-weight vector $w$. Decompose the weight vector $w=w'+v$, where $w'$ and $v$ are defined in \\eqref{eq: def_split_weight}.\nThen releasing $Y$ (as defined in \\eqref{eq:noise_split_weight}) is $\\eps_0$-DP, and, with probability at least $1-\\beta_0$, for every cut $S$,\n\\[\n |Y(S,V\\setminus S)+w'(S,V\\setminus S)-w(S,V\\setminus S)|\\leq(\\gamma/2)w(S,V\\setminus S).\n\\]\n\\end{lemma}",
+      "references": [
+        "eq: def_split_weight",
+        "eq:noise_split_weight",
+        "lem:laplace-mech"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:stability_of_optimizer"
+      ],
+      "start_line": 2236,
+      "end_line": 2246,
+      "statement": "\\begin{lemma}\\label{lem:stability_of_optimizer}\nLet $A_1=A_0+\\sum_e\\xi_e b_eb_e^\\top/4$, and let\n\\[\n X_i=\\arg\\max_{X\\in\\mathcal X}\\{\\ip{A_i}{X}+\\lambda\\log\\det X\\},\n \\quad i\\in\\{0,1\\}.\n\\]\nThen\n\\[\\norm{X_0^{-1/2}(X_1-X_0)X_1^{-1/2}}_F\\leq \\frac{\\sum_e|\\xi_e|\\sqrt{q_e(X_0)q_e(X_1)}}{\\lambda}.\\]\nAdditionally, if $\\norm{X_0^{-1/2}(X_1-X_0)X_1^{-1/2}}_F\\leq1/2$, then for every $e$ it holds that\n\\[\\frac{1}{2}q_e(X_1)\\leq q_e(X_0)\\leq 2q_e(X_1).\\]\n\\end{lemma}",
+      "references": [
+        "eq:foo_ineq",
+        "eq:frob-sq-ineq",
+        "eq:q-endpoint-difference"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:gaussian-privacy"
+      ],
+      "start_line": 2309,
+      "end_line": 2311,
+      "statement": "\\begin{lemma}\\label{lem:gaussian-privacy}\nLet $\\del_1 \\in(0,1/2)$ be a fixed parameter and $X_0,X_1\\in\\mathbb{R}^{n\\times n}$ be symmetric positive definite matrices. Denote $E=X_0^{-1/2}(X_1-X_0)X_1^{-1/2}$. We use $\\pdf_0$ and $\\pdf_1$ to denote the probability density functions of $\\mathcal{N}(0,X_0)$ and $\\mathcal{N}(0,X_1)$ respectively. Suppose $\\norm{E}_F<1/2$. Then for \\[\\eps_1=O\\left(k\\norm{E}_F^2+\\sqrt{k\\log\\frac{1}{\\del_1}}\\norm{E}_F+\\log\\frac{1}{\\del_1}\\norm{E}_F\\right),\\] we have \\[e^{-\\eps_1}\\prod_{j=1}^k\\pdf_1(Z^{(j)})\\leq\\prod_{j=1}^k\\pdf_0(Z^{(j)})\\leq e^{\\eps_1}\\prod_{j=1}^k\\pdf_1(Z^{(j)})\\] with probability at least $1-\\del_1$ over the joint distribution of the batch   $(Z^{(1)}, \\dots, Z^{(k)})$, where each $Z^{(j)} \\sim \\mathcal{N}(0, X_0)$ is drawn independently.\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:concentration_chi-squares"
+      ],
+      "start_line": 2317,
+      "end_line": 2323,
+      "statement": "\\begin{lemma}[\\cite{laurent2000adaptive}]\\label{lem:concentration_chi-squares}\nFor a fixed parameter $t>0$, given independent standard Gaussian variables $\\Sigma_i\\sim\\mathcal{N}(0,1)$ and weight $a_i$ for $i=1,\\dots,n$.  Then,\n\\[\n \\Prb\\left[\\left|\\sum_{i=1}^n a_i(\\Sigma_i^2-1)\\right|\n >2\\bigl(\\norm a_2\\sqrt t+\\norm a_\\infty t\\bigr)\\right]\\leq2e^{-t}.\n\\]\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "laurent2000adaptive"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:pay-what-you-get"
+      ],
+      "start_line": 2391,
+      "end_line": 2419,
+      "statement": "\\begin{lemma}[Success-Charged Composition]\n\\label{lem:pay-what-you-get}\nSuppose that the following conditions hold for every pair of adjacent inputs $w$ and $w'$. Let $\\mathcal{M}_1, \\dots, \\mathcal{M}_k$ be a sequence of adaptively chosen randomized mechanisms, where each mechanism outputs either a valid result or a designated failure symbol $\\bottom$.\nFor each step $t \\in [k]$ and every common transcript prefix $y_{<t} = (y_1, \\dots, y_{t-1})$, let $P_t^0$ and $P_t^1$ denote the conditional output distributions of $\\mathcal{M}_t(w)$ and $\\mathcal{M}_t(w')$, respectively. Suppose there exist auxiliary probability measures $N_t^0$ and $N_t^1$, a privacy loss parameter $\\ell_t = \\ell_t(y_{<t}) \\ge 0$, and global constants $\\ell^* < 1/10$ and $\\delta' \\ge 0$ such that, for any measurable set $A$ of return values and $b \\in \\{0, 1\\}$:\n\\begin{itemize}\n    \\item If $P_t^b(A)=0$, then $N_t^b(A)=0;$\n    \\item $|P_t^b(A) - N_t^b(A)| \\le \\delta';$\n    \\item $e^{-\\ell_t} N_t^1(A) \\le N_t^0(A) \\le e^{\\ell_t} N_t^1(A),$\n\\end{itemize}\nwhere $\\ell_t(y_{<t}) \\le \\ell^*$.\nFurthermore, suppose there exists a deterministic bound  $L$\nsuch that for any sequence of outputs $y_1, \\dots, y_k$ sampled sequentially according to\n$y_t\\sim N_t^b(\\cdot\\mid y_{<t}),$ for $t=1,\\ldots,k$,\nthe accumulated privacy loss over successful attempts is bounded by $L$:\n\\begin{equation*}\n    \\sum_{t=1}^k \\ell_t(y_{<t}) \\cdot \\ind[y_t \\ne \\bottom] \\le L.\n\\end{equation*}\nThen, for any fixed $\\delta'' \\in (0,1)$, the adaptive composition $(\\mathcal{M}_1, \\dots, \\mathcal{M}_k)$ is $(\\eps, \\del)$-differentially private, where\n\\begin{equation*}\n    \\eps = 4L + 4\\ell^*\\log(1/\\del''), \\qquad \\del = \\del'' + (1+e^{\\eps})k\\del'.\n\\end{equation*}\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:gradient_privacy"
+      ],
+      "start_line": 2426,
+      "end_line": 2431,
+      "statement": "\\begin{lemma}[Privacy of \\Cref{alg:gradient_aggregation}]\n\\label{lem:gradient_privacy}\nFix any $\\eps_{\\mathrm{GE}}, \\delta_{\\mathrm{GE}}$ and $\\beta_{\\mathrm{GE}}\\in(0,1)$, let $\\eps_1=\\frac{\\eps_{\\mathrm{GE}}}{320K(1+\\log(2/\\del_{\\mathrm{GE}}))}, \\del_1=\\frac{\\del_{\\mathrm{GE}}}{20n^2K}, k=\\Theta(\\log\\frac{n}{\\beta_{\\chi}\\del_1}), \\beta_{\\chi}=\\beta_{\\mathrm{GE}}/4n^2K$ and $\\lambda=\\Theta(\\frac{1}{\\eps_1}\\log\\frac{n}{\\beta_{\\mathrm{GE}}\\del_{\\mathrm{GE}}}).$ Then each invocation of\n\\Cref{alg:gradient_aggregation} in \\Cref{alg:main} with input $(w_i,h_i,\\gamma)$ is\n$(\\eps_{\\mathrm{GE}}, \\delta_{\\mathrm{GE}})$-differentially private.\n\\end{lemma}",
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:gradient_estimation",
+        "alg:main",
+        "eq: A_D",
+        "eq:direct-constant-approximation",
+        "eq:direct-covariance-distance",
+        "eq:direct-gaussian-loss",
+        "eq:eps_prime",
+        "eq:loss_in_one_sample",
+        "eq:qmax-leq-g",
+        "eq:xi-leq-r-zeta",
+        "lem:chi",
+        "lem:gaussian-privacy",
+        "lem:laplace-mech",
+        "lem:pay-what-you-get",
+        "lem:stability_of_optimizer",
+        "line:accepted_trial"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:main-privacy"
+      ],
+      "start_line": 2655,
+      "end_line": 2659,
+      "statement": "\\begin{lemma}[Privacy of \\Cref{alg:main}]\\label{lem:main-privacy}\nFor $0<\\varepsilon\\leq1$ and $0<\\delta<1$, fix $\\eps_2=\\frac{\\eps}{2T_1}$, $\\eps_{\\mathrm{GE}}=\\frac{\\eps}{4T_1\\sqrt{2T_2\\log(2T_1/\\delta)}}$, $\\delta_{\\mathrm{GE}}=\\frac{\\delta}{2T_1T_2}.$\nThen \\Cref{alg:main} is\n$(\\eps, \\del)$-differentially private.\n\\end{lemma}",
+      "references": [
+        "alg:main",
+        "lem:advanced-composition",
+        "lem:basic-composition",
+        "lem:gradient_privacy",
+        "lem:laplace-mech"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:sdp_error"
+      ],
+      "start_line": 2699,
+      "end_line": 2704,
+      "statement": "\\begin{lemma}\\label{lem:sdp_error}\nFor every signed vector $D \\in \\mathbb{R}^{\\binom{n}{2}}$ and every cut $S \\subseteq [n]$,\n\\[\\langle D, c_S\\rangle\\leq 2\\max\\{F(D),0\\}+O(\\lambda n\\log n+\\norm{D}_1/n).\\]\nMoreover, $\\langle D,\\one\\rangle\\leq2F(D)$.\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:gradient_estimation"
+      ],
+      "start_line": 2722,
+      "end_line": 2733,
+      "statement": "\\begin{lemma}\\label{lem:gradient_estimation}\nLet $0<\\gamma<1$, $K=\\Theta(\\log(n/\\beta_{\\mathrm{GE}}))$, $\\tau_1=\\log(1/\\beta_1)/\\eps_1$ and $\\beta_1=\\beta_{\\chi}=\\beta_{\\mathrm{GE}}/4n^2K$. Given nonnegative edge weights $w$ and a nonnegative partial estimate $h$, suppose $w_e\\leq U$ for every $e$. Let $(g^+,g^-,r^*)=\\mathsf{AggregateWitnesses}(w,h,\\gamma)$ (\\Cref{alg:gradient_aggregation}).\nThen with probability at least $1-\\beta_{\\mathrm{GE}}$:\n\\begin{itemize}\n    \\item $\\langle h,g^+\\rangle\\geq(1+\\gamma)\\langle w,g^+\\rangle;$\n    \\item $\\langle h,g^-\\rangle\\leq(1-\\gamma)\\langle w,g^-\\rangle;$\n    \\item For every cut $S$ simultaneously, \\[(1-\\gamma)\\langle w,c_S\\odotc r^*\\rangle-B\\leq \\langle h,c_S\\odotc r^*\\rangle\\leq(1+\\gamma)\\langle w,c_S\\odotc r^*\\rangle+B,\\]\nwhere $B=\\Theta\\left(\\tau_1+\\lambda n\\log n+nU\\right).$\n\\end{itemize}\n\\end{lemma}",
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:gradient_estimation",
+        "eq:F_D",
+        "lem:chaos",
+        "lem:chi",
+        "lem:sdp_error"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:inner_round"
+      ],
+      "start_line": 2801,
+      "end_line": 2809,
+      "statement": "\\begin{lemma}\\label{lem:inner_round}\nLet $0 < \\gamma \\leq 1/4$, $\\eta=\\gamma/[8(1+\\gamma)]$, $\\tau_2=\\log(1/\\beta_2)/\\eps_2$,\n$B=O(\\tau_1+\\lambda n\\log n+nU)$ as in \\Cref{alg:main}, and\n$M_{\\mathrm{stop}}=C(nU\\log\\frac{nU}{\\delta\\beta\\gamma\\eps}+\\frac{n}{\\gamma\\varepsilon}(\\log\\frac{nU}{\\delta\\beta\\gamma\\eps})^6)\\geq10(B+\\tau_2/\\gamma)$, for a sufficiently large universal constant $C$.\nFor any fixed outer iteration $i$, with probability at least $1-T_2\\beta_{\\mathrm{GE}}-\\beta_2$, if $\\widetilde M_i>M_{\\rm stop}$, then within at most $T_2=1+\\left\\lceil64(1+\\gamma)^2\\log n/\\gamma^2\\right\\rceil=O(\\log n/\\gamma^2)$ inner iterations, $\\mathsf{AggregateWitnesses}(w_i,h_i,\\gamma)$ returns $(g^+_i,g^-_i,r_i)$ satisfying\n\\[\n\\langle h_i,r_i\\rangle\\geq\\max\\{\\langle h_i,g^+_i\\rangle,\\langle h_i,g^-_i\\rangle\\}.\n\\]\n\\end{lemma}",
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:main",
+        "eq:continuing-mass-bounds",
+        "eq:diff_in_j_iterate",
+        "lem:gradient_estimation"
+      ],
+      "citations": [
+        "fan2026private"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:outer_round"
+      ],
+      "start_line": 2929,
+      "end_line": 2931,
+      "statement": "\\begin{lemma}\\label{lem:outer_round}\nWith probability at least $1-T_1T_2\\beta_{\\mathrm{GE}}-T_1\\beta_2$, \\Cref{alg:main} terminates with $a_i=0$ or $\\widetilde{M}_i\\leq M_{\\mathsf{stop}}$ in at most $T_1 = O(\\log(nU))$ outer rounds.\n\\end{lemma}",
+      "references": [
+        "alg:main",
+        "eq:continuing-mass-bounds",
+        "lem:gradient_estimation",
+        "lem:inner_round"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:utility"
+      ],
+      "start_line": 2967,
+      "end_line": 2983,
+      "statement": "\\begin{lemma}\\label{lem:utility}\nLet $n\\geq2$, $U\\geq1$, $0<\\gamma\\leq1/4$, $0<\\eps\\leq1$, and $0<\\delta,\\beta<1/10$.\nChoose all parameters as in \\Cref{alg:main}, in particular\n$\\eps_{\\mathrm{GE}}=\\eps/(4T_1\\sqrt{2T_2\\log(2T_1/\\delta)})$,\n$\\delta_{\\mathrm{GE}}=\\delta/(2T_1T_2)$, and $M_{\\mathrm{stop}}=C(nU\\log\\frac{nU}{\\delta\\beta\\gamma\\eps}+\\frac{n}{\\gamma\\varepsilon}(\\log\\frac{nU}{\\delta\\beta\\gamma\\eps})^6)\n\\geq10(B+\\tau_2/\\gamma)$, for a sufficiently large universal constant $C$.\nGiven a nonnegative weighted $n$-vertex graph $G$ with edge weights bounded by $U$, \\Cref{alg:main} outputs a\nnonnegative weighted graph $\\widetilde{G}$ satisfying,\nwith probability at least $1-\\beta$, simultaneously\nfor every $S\\subseteq V$,\n\\begin{align*}\n \\left|w_G(S,V\\setminus S)-w_{\\widetilde{G}}(S,V\\setminus S)\\right|\n \\leq \\gamma w_G(S,V\\setminus S)  + O\\left(nU\\log\\frac{nU}{\\delta\\beta\\gamma\\eps}+\\frac{n}{\\gamma\\varepsilon}\n \\left(\\log\\frac{nU}{\\delta\\beta\\gamma\\eps}\\right)^7\\right).\n\\end{align*}\n\\end{lemma}",
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:main",
+        "eq:one round utility",
+        "lem:gradient_estimation",
+        "lem:gradient_privacy",
+        "lem:outer_round"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:chi_square_tail"
+      ],
+      "start_line": 3363,
+      "end_line": 3368,
+      "statement": "\\begin{lemma}[Chi-squared Tail Bound~\\cite{laurent2000adaptive}]\\label{lem:chi_square_tail}\nLet $Y_1, \\dots, Y_k$ be independent standard normal random variables, i.e., $Y_i \\sim \\mathcal{N}(0, 1)$. The random variable $Q = \\sum_{i=1}^k Y_i^2$ follows a Chi-squared distribution with $k$ degrees of freedom, denoted as $Q \\sim \\chi_k^2$. For any such $Q$, there exists a universal constant $c > 0$ such that\n\\[\n \\Prb\\left[\\frac{Q}{k} \\notin \\left[\\frac{1}{2}, 2\\right]\\right] \\leq 2e^{-ck}.\n\\]\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "laurent2000adaptive"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:hypercontractivity"
+      ],
+      "start_line": 3372,
+      "end_line": 3378,
+      "statement": "\\begin{lemma}[Gaussian Hypercontractivity for Degree-Two Polynomials~\\cite{Janson97}]\\label{lem:hypercontractivity}\nLet $W$ be a degree-two polynomial in independent standard Gaussian random variables. Then its higher moments can be bounded by its second moment. Specifically, for the $4$-th moment, we have:\n\\[\n    \\|W\\|_4 \\le 3\\|W\\|_2,\n\\]\nwhere $\\|W\\|_p = (\\E[|W|^p])^{1/p}$ denotes the $L_p$ norm of the random variable.\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "Janson97"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:holder_interpolation"
+      ],
+      "start_line": 3380,
+      "end_line": 3386,
+      "statement": "\\begin{lemma}[Log-Convexity of $L_p$ Norms]\\label{lem:holder_interpolation}\nFor any random variable $W$ and $1 \\le p < r < q \\le \\infty$, the $L_p$ norms satisfy the interpolation inequality $\\|W\\|_r \\le \\|W\\|_p^\\theta \\|W\\|_q^{1-\\theta}$, where $\\theta \\in (0, 1)$ is determined by $\\frac{1}{r} = \\frac{\\theta}{p} + \\frac{1-\\theta}{q}$.\nIn particular, choosing $p=1, r=2$, and $q=4$ yields $\\theta = 1/3$, which gives:\n\\[\n    \\|W\\|_2 \\le \\|W\\|_1^{1/3} \\|W\\|_4^{2/3}.\n\\]\n\\end{lemma}",
+      "references": [],
+      "citations": []
+    },
+    {
+      "kind": "proposition",
+      "labels": [
+        "prop:unbiased_estimator"
+      ],
+      "start_line": 3390,
+      "end_line": 3396,
+      "statement": "\\begin{proposition}[Unbiased Estimator of Fractional Query]\\label{prop:unbiased_estimator}\nLet $X \\in \\mathcal{X}$ be a valid covariance matrix and let $Z \\sim \\mathcal{N}(0, X)$. For any pair of vertices $e = \\{u,v\\}$, we have\n\\[\n    \\E\\left[\\frac{(Z_u - Z_v)^2}{4}\\right] = q_e(X).\n\\]\nConsequently, for $\\overline{g}(u,v) = \\frac{1}{k} \\sum_{j=1}^k \\frac{(Z^{(j)}_u - Z^{(j)}_v)^2}{4}$ where $Z^{(j)}$ are drawn independently from $\\mathcal{N}(0, X)$, it holds that $\\E[\\overline{g}(u,v)] = q_e(X)$.\n\\end{proposition}",
+      "references": [
+        "eq:qe"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:pythagorean"
+      ],
+      "start_line": 3573,
+      "end_line": 3586,
+      "statement": "\\begin{lemma}[Generalized Pythagorean Inequality for KL Divergence~\\cite{Csiszar75}]\\label{lem:pythagorean}\nLet $\\mathcal{K}$ be a closed convex set of probability distributions, and let $\\overline{p}$ be an arbitrary strictly positive probability distribution. If $p'$ is the projection of $\\overline{p}$ onto $\\mathcal{K}$, defined as:\n\\[\n    p' = \\argmin_{z \\in \\mathcal{K}} \\KL(z \\| \\overline{p}),\n\\]\nthen for any target distribution $p^* \\in \\mathcal{K}$, it holds that:\n\\[\n    \\KL(p^* \\| \\overline{p}) \\ge \\KL(p^* \\| p') + \\KL(p' \\| \\overline{p}).\n\\]\nIn particular, since $\\KL(p' \\| \\overline{p}) \\ge 0$, this implies the distance-reduction property:\n\\[\n    \\KL(p^* \\| p') \\le \\KL(p^* \\| \\overline{p}).\n\\]\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "Csiszar75"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:capped-unit-release"
+      ],
+      "start_line": 3588,
+      "end_line": 3599,
+      "statement": "\\begin{lemma}[Capped unit-bounded cut release]\\label{lem:capped-unit-release}\nLet $D\\subseteq\\binom V2$ be public and let $x\\in[0,1]^D$. For $0<\\gamma\\leq1/4$, $0<\\varepsilon\\leq1$, and $0<\\delta,\\beta_{\\rm cap}<1/10$, there is a polynomial-time $(\\varepsilon, \\delta)$-DP mechanism under adjacency defined in Definition~\\ref{def:DP} on $x$ that outputs $q\\in[0,1]^D$ such that, except with probability $\\beta_{\\rm cap}$, simultaneously for every $S\\subseteq V$,\n\\begin{equation*}\n \\left|q(\\delta_D(S))-x(\\delta_D(S))\\right| \\leq \\gamma x(\\delta_D(S))+A_{\\rm cap},\n\\end{equation*}\nwhere\n\\[\n A_{\\rm cap} \\leq O\\left(\\frac{n}{\\gamma\\varepsilon}\n \\left(\\log\\frac{n}{\\delta\\beta_{\\rm cap}\\gamma\\varepsilon}\\right)^7\\right).\n\\]\n\\end{lemma}",
+      "references": [
+        "alg:gradient_estimation",
+        "alg:main",
+        "def:DP",
+        "eq:lower-biased-mass-good",
+        "lem:chaos",
+        "lem:chi",
+        "lem:gradient_estimation",
+        "lem:gradient_privacy",
+        "lem:inner_round",
+        "lem:main-privacy",
+        "lem:outer_round",
+        "lem:pythagorean",
+        "lem:utility",
+        "sec:preprocess"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:cc-black-box-reduction"
+      ],
+      "start_line": 3693,
+      "end_line": 3703,
+      "statement": "\\begin{theorem}[Black-box private correlation-clustering reduction]\n\\label{thm:cc-black-box-reduction}\nLet $\\rho\\geq1$ and $p_0>0$ be constants, and let $\\mathcal A$ be a polynomial-time randomized algorithm such that, on every unweighted complete-graph min-disagree instance $Q$,\n\\[\n \\Prb\\left[\\operatorname{cc}_Q(\\mathcal A(Q)) \\leq \\rho\\operatorname{OPT}_Q\\right] \\geq p_0.\n\\]\nThen, for every fixed $\\xi>0$, $\\varepsilon>0$, and $\\delta=n^{-10}$, there is a polynomial-time $(\\varepsilon, \\delta)$-DP algorithm that, on every complete-graph min-disagree instance $G$, with high probability, outputs a partition $\\widehat\\Pi$ satisfying\n\\[\n \\operatorname{cc}_G(\\widehat\\Pi) \\leq (\\rho+\\xi)\\operatorname{OPT}_G+\\widetilde O_{\\rho,\\xi,\\varepsilon}(n).\n\\]\n\\end{theorem}",
+      "references": [
+        "eq:cc-baseline",
+        "eq:cc-bernoulli-rounding",
+        "eq:cc-objective-identity",
+        "eq:cc-random-block-cut",
+        "eq:cc-relative-transfer",
+        "eq:cc-uniform-surrogate",
+        "lem:basic-composition",
+        "lem:capped-unit-release",
+        "lem:post-processing"
+      ],
+      "citations": [
+        "AssadiKhannaPutterman25",
+        "BEK21",
+        "CohenAddadEtAlPrivateCC",
+        "liu2022better"
+      ]
+    },
+    {
+      "kind": "corollary",
+      "labels": [
+        "cor:cc-fixed-k"
+      ],
+      "start_line": 3779,
+      "end_line": 3790,
+      "statement": "\\begin{corollary}[Private fixed-$k$ correlation clustering]\n\\label{cor:cc-fixed-k}\nFor every fixed $k\\geq2$ and $\\xi>0$, constant $\\varepsilon>0$, and $\\delta=n^{-10}$, there is a\npolynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm for complete unweighted\nMin-Disagree with at most $k$ clusters which, with high probability, outputs a partition\n$\\widehat\\Pi$ satisfying\n\\[\n \\operatorname{cc}_G(\\widehat\\Pi)\n \\leq (1+\\xi)\\operatorname{OPT}_{G,k}\n   +\\widetilde O_{\\xi,\\varepsilon}(n).\n\\]\n\\end{corollary}",
+      "references": [
+        "eq:cc-baseline",
+        "thm:cc-black-box-reduction"
+      ],
+      "citations": [
+        "GiotisGuruswami06"
+      ]
+    },
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:private-max-k-cut"
+      ],
+      "start_line": 3824,
+      "end_line": 3849,
+      "statement": "\\begin{theorem}[Private Max-$k$-Cut]\n\\label{thm:private-max-k-cut}\nSuppose a polynomial-time nonprivate algorithm, on every nonnegative weighted graph $Q$, outputs\nan at-most-$k$ partition $\\Pi$ and, for some $0<\\rho_k\\leq1$, satisfies\n\\[\n \\E[\\operatorname{cut}_Q(\\Pi)]\n \\geq\\rho_k\\operatorname{OPT}^{\\operatorname{Max-}k\\operatorname{-Cut}}_Q.\n\\]\nFor every fixed $\\xi>0$, constant $\\varepsilon>0$, and\n$\\delta=n^{-10}$, there is a polynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm which, with\nhigh probability, outputs an at-most-$k$ partition $\\widehat\\Pi$ satisfying\n\\[\n \\operatorname{cut}_G(\\widehat\\Pi)\n \\geq (\\rho_k-\\xi)\\operatorname{OPT}^{\\operatorname{Max-}k\\operatorname{-Cut}}_G\n   -\\widetilde O_{\\xi,\\varepsilon}(n).\n\\]\nThe additive term is independent of $k$.  In particular, for Max-Cut, the algorithm of\nGoemans and Williamson~\\cite{GoemansWilliamson95} gives\n\\[\n \\operatorname{cut}_G(\\widehat\\Pi)\n \\geq (0.878-\\xi)\\operatorname{OPT}^{\\operatorname{Max-Cut}}_G\n   -\\widetilde O_{\\xi,\\varepsilon}(n).\n\\]\nFor $k\\geq3$, one may use the standard SDP ratio $\\rho_k$ of Frieze and\nJerrum~\\cite{FriezeJerrum97}.\n\\end{theorem}",
+      "references": [
+        "eq:application-cut-event",
+        "eq:max-k-cut-transfer",
+        "thm:main"
+      ],
+      "citations": [
+        "FriezeJerrum97",
+        "GoemansWilliamson95",
+        "aamand2025breaking",
+        "liu2022better"
+      ]
+    },
+    {
+      "kind": "remark",
+      "labels": [
+        "rem:maxcut-tightness"
+      ],
+      "start_line": 3893,
+      "end_line": 3932,
+      "statement": "\\begin{remark}[Approximate-DP Max-Cut lower bound]\\label{rem:maxcut-tightness}\nA direct-sum adaptation of the privacy comparison in~\\cite{dharangutte2026price}\nshows that the linear additive dependence on $n$ is necessary even for unweighted\nMax-Cut under approximate differential privacy. Specifically, let $n\\geq8$, $0\\leq\\varepsilon\\leq1$,\n$0\\leq\\delta,\\beta\\leq1/100$, and $0.868\\leq\\rho\\leq1$.\nIf an $(\\varepsilon,\\delta)$-edge-DP algorithm $\\mathcal M$ returns a cut of value\nat least $\\rho\\operatorname{OPT}_G-B$, where $B\\geq0$, with probability at least\n$1-\\beta$ on every unweighted $n$-vertex graph, then\n$B\\geq\\lfloor n/8\\rfloor/100=\\Omega(n)$.\nTo see this, partition $8m$ vertices into $m=\\lfloor n/8\\rfloor$ public blocks\nof size eight, and put one independently uniform random edge in each block;\nany remaining vertices are isolated. Every such graph has optimum $m$.\nFix a block and the edges in all other blocks. Let $G_0$ leave this block empty,\nand let $G_e=G_0+e$ for each of its $28$ possible edges $e$.\nLet $E_e$ be the event that the output cut does not cut $e$.\nDifferential privacy gives\n\\[\n \\Prb[\\mathcal M(G_e)\\in E_e]\n \\geq e^{-\\varepsilon}\\bigl(\\Prb[\\mathcal M(G_0)\\in E_e]-\\delta\\bigr).\n\\]\nEvery cut separates at most $16$ of the $28$ possible edges in the block, so\naveraging over $e$ bounds its expected contribution under $\\mathcal M(G_e)$ by\n\\[\n q:=1-e^{-\\varepsilon}(3/7-\\delta)\n \\leq1-e^{-1}(3/7-1/100)<0.847.\n\\]\nThis holds for every choice of the other blocks. Averaging over all input edges\nand summing over blocks therefore gives some graph $G$ with\n$\\E[\\operatorname{cut}_G(\\mathcal M(G))]\\leq qm$.\nThe assumed utility guarantee and nonnegativity of cut values give\n$\\E[\\operatorname{cut}_G(\\mathcal M(G))]\\geq(1-\\beta)\\rho m-B$.\nConsequently,\n\\[\n B\\geq\\bigl((1-\\beta)\\rho-q\\bigr)m\n >\\bigl(0.99\\cdot0.868-0.847\\bigr)m>m/100.\n\\]\nIn particular, this applies to the ratio $0.878-\\xi$ for $0<\\xi\\leq1/100$,\nestablishing the claimed tightness up to polylogarithmic factors in that range.\n\\end{remark}",
+      "references": [],
+      "citations": [
+        "dharangutte2026price"
+      ]
+    },
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:private-constrained-cut"
+      ],
+      "start_line": 3961,
+      "end_line": 3991,
+      "statement": "\\begin{theorem}[Private bicriteria cut minimization]\n\\label{thm:private-constrained-cut}\nFix $0<\\eta\\leq1/4$, $0<\\varepsilon\\leq1$, $0<\\delta,\\beta<1/10$,\n$\\rho\\geq1$, and $0\\leq\\tau<1$.  Let\n$\\emptyset\\ne\\mathcal F,\\mathcal F'\\subseteq2^V$ be public families and\ndefine\n\\[\n \\operatorname{OPT}_{G,\\mathcal F}\n :=\\min_{S\\in\\mathcal F}w_G(S,V\\setminus S).\n\\]\nSuppose a polynomial-time nonprivate algorithm, on every nonnegative weighted graph, returns\n$\\widehat S\\in\\mathcal F'$ with probability at least $1-\\tau$ and, on that event,\n\\[\n w(\\widehat S,V\\setminus\\widehat S)\n \\leq \\rho\\min_{S\\in\\mathcal F}w(S,V\\setminus S).\n\\]\nThen there is a polynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm which, with probability\nat least $1-\\beta-\\tau$, returns $\\widehat S\\in\\mathcal F'$ satisfying\n\\[\n w_G(\\widehat S,V\\setminus\\widehat S)\n \\leq \\rho\\frac{1+\\eta}{1-\\eta}\\operatorname{OPT}_{G,\\mathcal F}\n   +\\frac{\\rho+1}{1-\\eta}A_\\eta.\n\\]\nHere $A_\\eta$ is the quantity in \\eqref{eq:application-additive-error} for the displayed\n$(\\varepsilon, \\delta,\\beta)$.\nConsequently, for every fixed $\\xi>0$ and $\\rho\\geq1$, choosing\n$\\eta=\\min\\{1/4,\\xi/(2\\rho+\\xi)\\}$ gives\n$(\\rho+\\xi)\\operatorname{OPT}_{G,\\mathcal F}\n+\\widetilde O_{\\xi,\\varepsilon}(\\rho^{8}n)$ for constant $\\varepsilon$ and\ninverse-polynomial $\\delta,\\beta$.\n\\end{theorem}",
+      "references": [
+        "eq:application-additive-error",
+        "eq:application-cut-event",
+        "thm:main"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:hc-bicriteria-recursion"
+      ],
+      "start_line": 4087,
+      "end_line": 4099,
+      "statement": "\\begin{lemma}[Bicriteria balanced recursion]\\label{lem:hc-bicriteria-recursion}\nFix constants $0<b\\leq1/3$ and $0<b'\\leq1/3$, and let $a\\geq1$.  Suppose an algorithm, on every\nnonnegative weighted graph with vertex set $A$ of size at least $1/b$, returns a $b'$-balanced\ncut $S$ satisfying\n\\[\n \\phi_{G[A]}(S)\\leq a\\min\\{\\phi_{G[A]}(R):R\\text{ is $b$-balanced}\\}.\n\\]\nRecursively applying this algorithm, and splitting smaller clusters as evenly as possible,\nproduces a hierarchical clustering tree $T$ with\n\\[\n \\operatorname{hcost}_G(T)\\leq O_b(a)\\operatorname{OPT}^{\\rm HC}_G.\n\\]\n\\end{lemma}",
+      "references": [
+        "eq:hc-one-split-charge",
+        "eq:hc-opt-levels"
+      ],
+      "citations": []
+    },
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:private-hierarchical-clustering"
+      ],
+      "start_line": 4150,
+      "end_line": 4163,
+      "statement": "\\begin{theorem}[Private hierarchical clustering]\n\\label{thm:private-hierarchical-clustering}\nFor every $0<\\eta\\leq1/4$, constant $0<\\varepsilon\\leq1$, and $\\delta=n^{-10}$, there is a\npolynomial-time $(\\varepsilon, \\delta)$-edge-DP algorithm that, with high probability, outputs a\n$b'$-balanced hierarchical clustering tree $\\widehat T$, for a universal constant $b'>0$,\nsatisfying\n\\[\n \\operatorname{hcost}_G(\\widehat T)\n \\leq O(\\sqrt{\\log n})\\operatorname{OPT}^{\\rm HC}_G\n  +O_\\eta(A_\\eta n\\log^{3/2}n).\n\\]\nIn particular, for fixed $\\eta$ the additive term is\n$\\widetilde O_{\\eta,\\varepsilon}(n^2)$.\n\\end{theorem}",
+      "references": [
+        "eq:application-cut-event",
+        "eq:hc-balanced-transfer",
+        "eq:hc-cut-decomposition",
+        "eq:hc-uniform-transfer",
+        "lem:hc-bicriteria-recursion"
+      ],
+      "citations": [
+        "AgarwalKhannaLiPatil22",
+        "AroraRaoVazirani09",
+        "AssadiEtAl22HCStreams",
+        "CharikarChatziafratis17",
+        "ImolaEtAl23"
+      ]
+    },
+    {
+      "kind": "lemma",
+      "labels": [
+        "lem:ekkl-discrepancy"
+      ],
+      "start_line": 4356,
+      "end_line": 4367,
+      "statement": "\\begin{lemma}[{\\cite[Lemma~5.2]{EKKL20}}]\n\\label{lem:ekkl-discrepancy}\nThere is an absolute constant $0<\\kappa\\leq1$ such that the following holds.\nLet $n\\geq2$, $1\\leq d\\leq n/2$, and $\\sigma\\in[0,1]$.\nLet $G,G'$ be simple unweighted graphs on the same $n$ vertices, with every\nvertex having degree in $[d/2,2d]$ in each graph. If\n$|E(G)\\mathbin{\\triangle}E(G')|\\geq\\sigma nd$, then\n\\[\n \\max_{\\substack{S,T\\subseteq V\\\\S\\cap T=\\emptyset}}\n       |w_G(S,T)-w_{G'}(S,T)|\\geq\\kappa\\sigma n\\sqrt d.\n\\]\n\\end{lemma}",
+      "references": [],
+      "citations": [
+        "EKKL20"
+      ]
+    },
+    {
+      "kind": "theorem",
+      "labels": [
+        "thm:lower_bound"
+      ],
+      "start_line": 4377,
+      "end_line": 4397,
+      "statement": "\\begin{theorem}[Lower Bound for Relative Cut Release]\n\\label{thm:lower_bound}\nLet $n\\geq33$, $\\varepsilon\\in(0,1)$, $0\\leq\\delta\\leq\\varepsilon/100$,\n$\\beta\\in (0,1/40]$, and $\\gamma \\in [0, 1)$.\nSuppose that an $(\\varepsilon,\\delta)$-differentially private mechanism\n$\\mathcal M$, on every nonnegative weighted graph $G$ on a fixed set $V$\nof $n$ vertices, outputs a nonnegative weighted graph $H$ such that,\nwith probability at least $1-\\beta$, simultaneously for all $S\\subseteq V$,\n\\[\n \\left|w_G(S, V\\setminus S) - w_H(S, V\\setminus S)\\right| \\leq \\gamma w_G(S, V\\setminus S) + A.\n\\]\nThen the additive error must satisfy\n\\[\n A=\\Omega\\left(\n   (1-\\gamma)\\cdot\\min\\left\\{\\frac{n^{3/2}}{\\varepsilon},\n                    \\frac{n}{\\varepsilon\\gamma}\\right\\}\n \\right).\n\\]\nwhere the implicit constant is absolute and $1/\\gamma$ is interpreted as\n$+\\infty$ when $\\gamma=0$.\n\\end{theorem}",
+      "references": [
+        "eq:lb_compatible_decoder",
+        "eq:lb_discrepancy",
+        "eq:lb_master_inequality",
+        "eq:lb_private_reconstruction",
+        "eq:lb_success_reconstruction",
+        "lem:ekkl-discrepancy",
+        "lem:post-processing"
+      ],
+      "citations": []
+    }
+  ],
+  "proofs": [
+    {
+      "start_line": 2197,
+      "end_line": 2213,
+      "title": null,
+      "references": [
+        "lem:laplace-mech"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2248,
+      "end_line": 2304,
+      "title": null,
+      "references": [
+        "eq:foo_ineq",
+        "eq:frob-sq-ineq",
+        "eq:q-endpoint-difference"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2325,
+      "end_line": 2354,
+      "title": "Proof of Lemma~\\ref{lem:gaussian-privacy}",
+      "references": [
+        "eq:logquotient",
+        "eq:part_A",
+        "eq:part_B",
+        "lem:concentration_chi-squares",
+        "lem:gaussian-privacy"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2433,
+      "end_line": 2651,
+      "title": null,
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:gradient_estimation",
+        "alg:main",
+        "eq: A_D",
+        "eq:direct-constant-approximation",
+        "eq:direct-covariance-distance",
+        "eq:direct-gaussian-loss",
+        "eq:eps_prime",
+        "eq:loss_in_one_sample",
+        "eq:qmax-leq-g",
+        "eq:xi-leq-r-zeta",
+        "lem:chi",
+        "lem:gaussian-privacy",
+        "lem:laplace-mech",
+        "lem:pay-what-you-get",
+        "lem:stability_of_optimizer",
+        "line:accepted_trial"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2661,
+      "end_line": 2687,
+      "title": null,
+      "references": [
+        "lem:advanced-composition",
+        "lem:basic-composition",
+        "lem:gradient_privacy",
+        "lem:laplace-mech"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2706,
+      "end_line": 2718,
+      "title": null,
+      "references": [],
+      "citations": []
+    },
+    {
+      "start_line": 2735,
+      "end_line": 2795,
+      "title": null,
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:gradient_estimation",
+        "eq:F_D",
+        "lem:chaos",
+        "lem:chi",
+        "lem:sdp_error"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2811,
+      "end_line": 2925,
+      "title": null,
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:main",
+        "eq:continuing-mass-bounds",
+        "eq:diff_in_j_iterate",
+        "lem:gradient_estimation"
+      ],
+      "citations": [
+        "fan2026private"
+      ]
+    },
+    {
+      "start_line": 2933,
+      "end_line": 2962,
+      "title": null,
+      "references": [
+        "alg:main",
+        "eq:continuing-mass-bounds",
+        "lem:gradient_estimation",
+        "lem:inner_round"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 2984,
+      "end_line": 3064,
+      "title": null,
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:main",
+        "eq:one round utility",
+        "lem:gradient_estimation",
+        "lem:gradient_privacy",
+        "lem:outer_round"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3068,
+      "end_line": 3136,
+      "title": "Proof of \\cref{thm:main}",
+      "references": [
+        "alg:gradient_aggregation",
+        "alg:gradient_estimation",
+        "alg:main",
+        "alg:preprocess",
+        "lem:basic-composition",
+        "lem:gaussian-privacy",
+        "lem:main-privacy",
+        "lem:preprocess",
+        "lem:utility",
+        "sec:preprocess",
+        "thm:main"
+      ],
+      "citations": [
+        "EKKL20",
+        "lee2015faster"
+      ]
+    },
+    {
+      "start_line": 3169,
+      "end_line": 3359,
+      "title": "Proof of Lemma~\\ref{lem:pay-what-you-get}",
+      "references": [
+        "eq:expectation-w_k",
+        "eq:kenerl-tv-distance",
+        "eq:one-step-moment",
+        "eq:pwg-kernel-ratio",
+        "eq:pwg-tail",
+        "eq:pwg-tv",
+        "lem:pay-what-you-get"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3398,
+      "end_line": 3404,
+      "title": null,
+      "references": [
+        "eq:qe"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3407,
+      "end_line": 3422,
+      "title": "Proof of Lemma~\\ref{lem:chi}",
+      "references": [
+        "alg:gradient_estimation",
+        "lem:chi",
+        "lem:chi_square_tail"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3423,
+      "end_line": 3453,
+      "title": "Proof of Lemma~\\ref{lem:chaos}",
+      "references": [
+        "lem:chaos",
+        "lem:chi",
+        "lem:holder_interpolation",
+        "lem:hypercontractivity",
+        "prop:unbiased_estimator"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3601,
+      "end_line": 3689,
+      "title": null,
+      "references": [
+        "alg:gradient_estimation",
+        "alg:main",
+        "eq:lower-biased-mass-good",
+        "lem:chaos",
+        "lem:chi",
+        "lem:gradient_estimation",
+        "lem:gradient_privacy",
+        "lem:inner_round",
+        "lem:main-privacy",
+        "lem:outer_round",
+        "lem:pythagorean",
+        "lem:utility",
+        "sec:preprocess"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 3705,
+      "end_line": 3759,
+      "title": null,
+      "references": [
+        "eq:cc-baseline",
+        "eq:cc-bernoulli-rounding",
+        "eq:cc-objective-identity",
+        "eq:cc-random-block-cut",
+        "eq:cc-relative-transfer",
+        "eq:cc-uniform-surrogate",
+        "lem:basic-composition",
+        "lem:capped-unit-release",
+        "lem:post-processing"
+      ],
+      "citations": [
+        "AssadiKhannaPutterman25",
+        "BEK21",
+        "CohenAddadEtAlPrivateCC",
+        "liu2022better"
+      ]
+    },
+    {
+      "start_line": 3763,
+      "end_line": 3771,
+      "title": null,
+      "references": [
+        "thm:cc-black-box-reduction"
+      ],
+      "citations": [
+        "garcia2026approximate"
+      ]
+    },
+    {
+      "start_line": 3792,
+      "end_line": 3805,
+      "title": null,
+      "references": [
+        "eq:cc-baseline",
+        "thm:cc-black-box-reduction"
+      ],
+      "citations": [
+        "GiotisGuruswami06"
+      ]
+    },
+    {
+      "start_line": 3851,
+      "end_line": 3890,
+      "title": null,
+      "references": [
+        "eq:application-cut-event",
+        "eq:max-k-cut-transfer",
+        "thm:main"
+      ],
+      "citations": [
+        "aamand2025breaking",
+        "liu2022better"
+      ]
+    },
+    {
+      "start_line": 3993,
+      "end_line": 4004,
+      "title": null,
+      "references": [
+        "eq:application-cut-event",
+        "thm:main"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 4101,
+      "end_line": 4148,
+      "title": null,
+      "references": [
+        "eq:hc-one-split-charge",
+        "eq:hc-opt-levels"
+      ],
+      "citations": []
+    },
+    {
+      "start_line": 4165,
+      "end_line": 4237,
+      "title": null,
+      "references": [
+        "eq:application-cut-event",
+        "eq:hc-balanced-transfer",
+        "eq:hc-cut-decomposition",
+        "eq:hc-uniform-transfer",
+        "lem:hc-bicriteria-recursion"
+      ],
+      "citations": [
+        "AgarwalKhannaLiPatil22",
+        "AroraRaoVazirani09",
+        "AssadiEtAl22HCStreams",
+        "CharikarChatziafratis17",
+        "ImolaEtAl23"
+      ]
+    },
+    {
+      "start_line": 4401,
+      "end_line": 4596,
+      "title": null,
+      "references": [
+        "eq:lb_compatible_decoder",
+        "eq:lb_discrepancy",
+        "eq:lb_master_inequality",
+        "eq:lb_private_reconstruction",
+        "eq:lb_success_reconstruction",
+        "lem:ekkl-discrepancy",
+        "lem:post-processing"
+      ],
+      "citations": []
+    }
+  ],
+  "algorithms": [
+    {
+      "start_line": 1663,
+      "end_line": 1694,
+      "labels": [
+        "alg:main"
+      ],
+      "text": "\\begin{algorithm}[h]\n\\caption{$\\mathsf{CutRelease}(w)$}\n\\label{alg:main}\n\\begin{algorithmic}[1]\n\\REQUIRE A preprocessed bounded graph $G=([n],E)$ with edge-weight vector $w$ (where $w_e \\leq U$), a relative error tolerance $\\gamma$, privacy parameters $\\epsilon, \\delta \\in (0, 1)$, and a failure probability $\\beta$.\n\\ENSURE A nonnegative weighted synthetic graph $\\widetilde{G}$ with edge-weight vector $\\widetilde{w}$.\n\\STATE Set parameters: $T_1=\\Theta(\\log (nU))$, $T_2=1+\\left\\lceil64(1+\\gamma)^2\\log n/\\gamma^2\\right\\rceil$, $M_{\\mathrm{stop}}=C(nU\\log\\frac{nU}{\\delta\\beta\\gamma\\eps}+\\frac{n}{\\gamma\\varepsilon}(\\log\\frac{nU}{\\delta\\beta\\gamma\\eps})^6)$, $\\eta=\\gamma/[8(1+\\gamma)]$, \n$\\eps_2=\\frac{\\eps}{2T_1}$, $\\beta_2=\\frac{\\beta}{2T_1}$, $\\tau_2=\\frac{\\log(1/\\beta_2)}{\\eps_2}$,\n$\\eps_{\\mathrm{GE}}=\\frac{\\eps}{4T_1\\sqrt{2T_2\\log(2T_1/\\delta)}}$, $\\delta_{\\mathrm{GE}}=\\frac{\\delta}{2T_1T_2}$, $\\beta_{\\mathrm{GE}}=\\frac{\\beta}{2T_1T_2}$.\n\\STATE Let $a_1\\gets \\one_{\\binom{n}{2}}$, $\\widetilde{w}\\gets \\mathbf{0}$.\n\\FOR{$i=1,\\ldots,T_1$}\n  \\STATE Let $w_i\\gets a_i\\odot w$.\n  \\STATE Privately release $\\widetilde M_i$ for $M_i=\\sum_{e}w_i(e)$ by $\\widetilde M_i=\\max(0,M_i+\\Lap(1/\\eps_2)+\\tau_2).$\n  \\IF{$a_i=\\mathbf{0}$ or $\\widetilde M_i\\le M_{\\mathrm{stop}}$}\n    \\STATE \\Return $\\widetilde{w}$.\n  \\ENDIF\n  \\STATE Initialize $h_i$ by $h_i(e)=\\widetilde M_i \\frac{a_i(e)}{\\sum_{e}a_i(e)}$ and $a_{i+1}$ by $a_{i+1}=a_i$.\n  \\FOR{$t=1,\\ldots,T_{2}$}\n    \\STATE \\COMMENT{Steps of MWU}\n    \\STATE $(g^+_i,g^-_i,r_i)\\gets\\mathsf{AggregateWitnesses}(w_i,h_i,\\gamma)$.\n    \\IF{$\\langle h_i,r_i\\rangle \\geq \\max\\{\\langle h_i,g_i^+\\rangle, \\langle h_i,g_i^-\\rangle\\}$}\n      \\STATE Partial estimator collection: $\\widetilde{w}\\gets \\widetilde{w}+h_i\\odot r_i$.\n      \\STATE Mask update:  $a_{i+1}\\gets a_i\\odot(\\one_{\\binom{n}{2}}-r_i)$ and \\textbf{break}.\n    \\ELSE\n      \\STATE Let $\\theta=1, g\\gets g^+_i$ if $\\langle h_i,g^+_i\\rangle\\geq \\langle h_i,g^-_i\\rangle$, and $\\theta=-1, g\\gets g^-_i$ otherwise.\n      \\STATE Mirror descent update: $h_i(e)\\gets\\widetilde M_i\\cdot\\frac{h_i(e)\\exp(-\\theta\\eta g(e))}{\\sum_{e}h_i(e)\\exp(-\\theta\\eta g(e))}$ for all $e$.\n    \\ENDIF\n  \\ENDFOR\n\\ENDFOR\n\\STATE \\Return $\\widetilde{w}$.\n\\end{algorithmic}\n\\end{algorithm}"
+    },
+    {
+      "start_line": 1977,
+      "end_line": 2001,
+      "labels": [
+        "alg:gradient_estimation",
+        "line:optimize_XD",
+        "line:accepted_trial",
+        "line:rescale_gradient"
+      ],
+      "text": "\\begin{algorithm}[h!]\n\\caption{$\\mathsf{FindWitness}(D,r)$}\n\\label{alg:gradient_estimation}\n\\begin{algorithmic}[1]\n\\REQUIRE A signed objective vector $D$, a mask $r$, privacy parameters $\\epsilon_{\\mathrm{GE}}, \\delta_{\\mathrm{GE}} \\in (0, 1)$, and a failure probability $\\beta_{\\mathrm{GE}}$.\n\\ENSURE A witness $g$ or the failure symbol $\\bot$.\n\\STATE Set parameters: $k=\\Theta(\\log(\\frac{n}{\\beta_\\chi\\del_1}))$, $K=\\Theta(\\log(\\frac{n}{\\beta_{\\mathrm{GE}}}))$, $\\lambda=\\Theta(\\frac{1}{\\eps_1}\\log\\frac{n}{\\beta_{\\mathrm{GE}}\\del_{\\mathrm{GE}}})$,  $\\eps_1=\\frac{\\eps_{\\mathrm{GE}}}{320K(1+\\log(2/\\del_{\\mathrm{GE}}))}$, $\\del_1=\\frac{\\del_{\\mathrm{GE}}}{20n^2K}$, $\\tau_1=\\frac{\\log(1/\\beta_1)}{\\eps_1}$, $\\beta_1=\\beta_{\\chi}=\\frac{\\beta_{\\mathrm{GE}}}{4n^2K}$.\n\\IF{$r=0$}\n  \\STATE \\Return $\\bot$\n\\ENDIF\n\\STATE Compute the optimizer $X_D$ of \\eqref{eq:F_D}.\\label{line:optimize_XD}\n\\FOR{$i=1,\\dots,K$}\n    \\STATE Choose random vectors $Z^{(j)}\\sim \\mathcal{N}(0,X_D)$ for each $j=1,\\dots,k$.\n    \\STATE Set $\\overline g(u,v)=\\frac1k\\sum_{j=1}^k\\frac{(Z_u^{(j)}-Z_v^{(j)})^2}{4},$ and $\\hat g(u,v)=\\min\\{\\overline{g}(u,v)/2,1\\}$.\n    \\STATE Compute a private estimate $Y=\\langle D, \\hat{g} \\rangle+L$, where $L\\sim\\Lap(1/\\eps_{1})$.                               \n  \\STATE Set $\\hat g_{\\max}\\gets\\max\\{\\hat g(e):r(e)>0\\}$.\n    \\IF{$Y<\\tau_1$ or $\\hat g_{\\max}=0$} \\label{line:accepted_trial}\n    \\STATE \\textbf{Continue.}\n  \\ENDIF\n  \\STATE Set $g(e)\\gets r(e)\\cdot\\hat g(e)/\\hat g_{\\max}$ for each $e$. \\label{line:rescale_gradient}\n  \\RETURN $g$.\n\\ENDFOR\n\\STATE \\Return $\\bot$.\n\\end{algorithmic}\n\\end{algorithm}"
+    },
+    {
+      "start_line": 2056,
+      "end_line": 2078,
+      "labels": [
+        "alg:gradient_aggregation",
+        "line:aggregate-positive",
+        "line:aggregate-negative"
+      ],
+      "text": "\\begin{algorithm}[ht]\n\\caption{$\\mathsf{AggregateWitnesses}(w,h,\\gamma)$}\n\\label{alg:gradient_aggregation}\n\\begin{algorithmic}[1]\n\\STATE $(g^+,g^-,r)\\gets(0,0,\\one_{\\binom{n}{2}})$.\n\\LOOP\n  \\IF{$r=0$}\n    \\STATE Return $\\{g^+,g^-,0\\}$.\n  \\ENDIF\n  \\STATE Let $g_{\\mathrm{new}}=\\mathsf{FindWitness}(D^+,r)$ where $D^+=r\\odotc(h-(1+\\gamma)w)$.\n  \\IF{$g_{\\mathrm{new}}\\ne \\bot$}\n    \\STATE $g^+\\gets g^++g_{\\mathrm{new}}$, $r\\gets r-g_{\\mathrm{new}}$ and \\textbf{continue}.\\label{line:aggregate-positive}\n  \\ENDIF\n  \\STATE Let $g_{\\mathrm{new}}=\\mathsf{FindWitness}(D^-,r)$ where $\n D^-=r\\odotc((1-\\gamma)w-h).$\n  \\IF{$g_{\\mathrm{new}}\\ne \\bot$}\n    \\STATE $g^-\\gets g^-+g_{\\mathrm{new}}$, $r\\gets r-g_{\\mathrm{new}}$ and \\textbf{continue}.\\label{line:aggregate-negative}\n  \\ENDIF\n\\STATE Release $\\{g^+,g^-,r\\}$  \n\\STATE Return $\\{g^+,g^-,r\\}$  \n\\ENDLOOP\n\\end{algorithmic}\n\\end{algorithm}"
+    },
+    {
+      "start_line": 2163,
+      "end_line": 2177,
+      "labels": [
+        "alg:preprocess"
+      ],
+      "text": "\\begin{algorithm}[h!]\n\\caption{$\\mathsf{ClipEdgeWeights}(w)$}\n\\label{alg:preprocess}\n\\begin{algorithmic}[1]\n\\REQUIRE A weight vector $w \\in \\mathbb{R}_{\\ge 0}^{\\binom{n}{2}}$, a relative error tolerance $\\gamma \\in (0, 1)$, a privacy parameter $\\eps_0 \\in (0, 1)$, and a failure probability $\\beta_0 \\in (0, 1)$.\n\\ENSURE A bounded edge-weight vector $w'$ and a publicly released private estimate $Y$ of the excess weights.\n\\STATE Set the bounding threshold $U = \\frac{8}{\\eps_0\\gamma}\\log\\left(\\frac{n}{\\beta_0}\\right)$ and the noise shift $V = \\frac{2}{\\eps_0}\\log\\left(\\frac{n}{\\beta_0}\\right)$.\n\\FOR{each edge $e \\in \\binom{n}{2}$}\n  \\STATE Decompose weights: $v_e \\gets (w_e-U)_+$ and $w'_e \\gets \\min\\{w_e, U\\}$.\n  \\STATE Draw Laplace noise: $L_e \\sim \\Lap(1/\\eps_0)$.\n  \\STATE Compute private excess: $Y_e \\gets \\max\\left\\{0, v_e + L_e - V \\right\\}$.\n\\ENDFOR\n\\RETURN $(w', Y)$.\n\\end{algorithmic}\n\\end{algorithm}"
+    }
+  ],
+  "labels": [
+    {
+      "label": "thm:main",
+      "line": 336
+    },
+    {
+      "label": "tab:comparison",
+      "line": 360
+    },
+    {
+      "label": "tab:applications",
+      "line": 415
+    },
+    {
+      "label": "cor:cc-intro",
+      "line": 491
+    },
+    {
+      "label": "cor:maxcut-intro",
+      "line": 511
+    },
+    {
+      "label": "sec:technical-overview",
+      "line": 551
+    },
+    {
+      "label": "eq:qe",
+      "line": 667
+    },
+    {
+      "label": "eq:overview-FD",
+      "line": 681
+    },
+    {
+      "label": "sec:prelim",
+      "line": 1431
+    },
+    {
+      "label": "def:DP",
+      "line": 1459
+    },
+    {
+      "label": "def:laplace-dist",
+      "line": 1491
+    },
+    {
+      "label": "lem:laplace-mech",
+      "line": 1522
+    },
+    {
+      "label": "lem:post-processing",
+      "line": 1531
+    },
+    {
+      "label": "lem:basic-composition",
+      "line": 1536
+    },
+    {
+      "label": "lem:advanced-composition",
+      "line": 1541
+    },
+    {
+      "label": "sec:CutRelease",
+      "line": 1653
+    },
+    {
+      "label": "alg:main",
+      "line": 1665
+    },
+    {
+      "label": "sec:witness",
+      "line": 1875
+    },
+    {
+      "label": "eq:elliptope",
+      "line": 1892
+    },
+    {
+      "label": "eq:F_D",
+      "line": 1908
+    },
+    {
+      "label": "sec:GradEst",
+      "line": 1934
+    },
+    {
+      "label": "alg:gradient_estimation",
+      "line": 1979
+    },
+    {
+      "label": "line:optimize_XD",
+      "line": 1987
+    },
+    {
+      "label": "line:accepted_trial",
+      "line": 1993
+    },
+    {
+      "label": "line:rescale_gradient",
+      "line": 1996
+    },
+    {
+      "label": "lem:chi",
+      "line": 2003
+    },
+    {
+      "label": "lem:chaos",
+      "line": 2011
+    },
+    {
+      "label": "sec:GradAgg",
+      "line": 2020
+    },
+    {
+      "label": "alg:gradient_aggregation",
+      "line": 2058
+    },
+    {
+      "label": "line:aggregate-positive",
+      "line": 2067
+    },
+    {
+      "label": "line:aggregate-negative",
+      "line": 2072
+    },
+    {
+      "label": "sec:preprocess",
+      "line": 2148
+    },
+    {
+      "label": "eq: def_split_weight",
+      "line": 2154
+    },
+    {
+      "label": "eq:noise_split_weight",
+      "line": 2158
+    },
+    {
+      "label": "alg:preprocess",
+      "line": 2165
+    },
+    {
+      "label": "lem:preprocess",
+      "line": 2189
+    },
+    {
+      "label": "sec:privacy",
+      "line": 2218
+    },
+    {
+      "label": "sec:privacy-sdp-stability",
+      "line": 2222
+    },
+    {
+      "label": "eq: A_D",
+      "line": 2226
+    },
+    {
+      "label": "lem:stability_of_optimizer",
+      "line": 2236
+    },
+    {
+      "label": "eq:foo_ineq",
+      "line": 2259
+    },
+    {
+      "label": "eq:frob-sq-ineq",
+      "line": 2285
+    },
+    {
+      "label": "eq:q-endpoint-difference",
+      "line": 2296
+    },
+    {
+      "label": "lem:gaussian-privacy",
+      "line": 2309
+    },
+    {
+      "label": "lem:concentration_chi-squares",
+      "line": 2317
+    },
+    {
+      "label": "eq:logquotient",
+      "line": 2334
+    },
+    {
+      "label": "eq:part_A",
+      "line": 2344
+    },
+    {
+      "label": "eq:part_B",
+      "line": 2351
+    },
+    {
+      "label": "sec:privacy-pwyg-comp",
+      "line": 2357
+    },
+    {
+      "label": "lem:pay-what-you-get",
+      "line": 2392
+    },
+    {
+      "label": "lem:gradient_privacy",
+      "line": 2427
+    },
+    {
+      "label": "eq:xi-leq-r-zeta",
+      "line": 2450
+    },
+    {
+      "label": "eq:direct-covariance-distance",
+      "line": 2465
+    },
+    {
+      "label": "eq:direct-gaussian-loss",
+      "line": 2477
+    },
+    {
+      "label": "eq:eps_prime",
+      "line": 2484
+    },
+    {
+      "label": "eq:direct-constant-approximation",
+      "line": 2500
+    },
+    {
+      "label": "eq:qmax-leq-g",
+      "line": 2514
+    },
+    {
+      "label": "eq:loss_in_one_sample",
+      "line": 2543
+    },
+    {
+      "label": "lem:main-privacy",
+      "line": 2655
+    },
+    {
+      "label": "sec:utility",
+      "line": 2690
+    },
+    {
+      "label": "sec:gradient_estimation",
+      "line": 2694
+    },
+    {
+      "label": "lem:sdp_error",
+      "line": 2699
+    },
+    {
+      "label": "lem:gradient_estimation",
+      "line": 2722
+    },
+    {
+      "label": "sec:mwu",
+      "line": 2797
+    },
+    {
+      "label": "lem:inner_round",
+      "line": 2801
+    },
+    {
+      "label": "eq:continuing-mass-bounds",
+      "line": 2813
+    },
+    {
+      "label": "eq:diff_in_j_iterate",
+      "line": 2851
+    },
+    {
+      "label": "lem:outer_round",
+      "line": 2929
+    },
+    {
+      "label": "lem:utility",
+      "line": 2967
+    },
+    {
+      "label": "eq:one round utility",
+      "line": 2989
+    },
+    {
+      "label": "sec:pay-what-you-get",
+      "line": 3165
+    },
+    {
+      "label": "eq:pwg-kernel-ratio",
+      "line": 3182
+    },
+    {
+      "label": "eq:kenerl-tv-distance",
+      "line": 3189
+    },
+    {
+      "label": "eq:pwg-tv",
+      "line": 3208
+    },
+    {
+      "label": "eq:one-step-moment",
+      "line": 3249
+    },
+    {
+      "label": "eq:expectation-w_k",
+      "line": 3295
+    },
+    {
+      "label": "eq:pwg-tail",
+      "line": 3327
+    },
+    {
+      "label": "sec:Gaussian_approximate",
+      "line": 3361
+    },
+    {
+      "label": "lem:chi_square_tail",
+      "line": 3363
+    },
+    {
+      "label": "lem:hypercontractivity",
+      "line": 3372
+    },
+    {
+      "label": "lem:holder_interpolation",
+      "line": 3380
+    },
+    {
+      "label": "prop:unbiased_estimator",
+      "line": 3390
+    },
+    {
+      "label": "app:applications",
+      "line": 3455
+    },
+    {
+      "label": "eq:application-additive-error",
+      "line": 3458
+    },
+    {
+      "label": "eq:application-cut-event",
+      "line": 3464
+    },
+    {
+      "label": "sec:correlation-clustering",
+      "line": 3478
+    },
+    {
+      "label": "eq:cc-objective-identity",
+      "line": 3529
+    },
+    {
+      "label": "lem:pythagorean",
+      "line": 3573
+    },
+    {
+      "label": "lem:capped-unit-release",
+      "line": 3588
+    },
+    {
+      "label": "eq:lower-biased-mass-good",
+      "line": 3625
+    },
+    {
+      "label": "sec:black-box-reduction-correlation-clustering",
+      "line": 3691
+    },
+    {
+      "label": "thm:cc-black-box-reduction",
+      "line": 3694
+    },
+    {
+      "label": "eq:cc-baseline",
+      "line": 3709
+    },
+    {
+      "label": "eq:cc-random-block-cut",
+      "line": 3724
+    },
+    {
+      "label": "eq:cc-relative-transfer",
+      "line": 3737
+    },
+    {
+      "label": "eq:cc-bernoulli-rounding",
+      "line": 3742
+    },
+    {
+      "label": "eq:cc-uniform-surrogate",
+      "line": 3746
+    },
+    {
+      "label": "cor:cc-fixed-k",
+      "line": 3780
+    },
+    {
+      "label": "thm:private-max-k-cut",
+      "line": 3825
+    },
+    {
+      "label": "eq:max-k-cut-transfer",
+      "line": 3864
+    },
+    {
+      "label": "rem:maxcut-tightness",
+      "line": 3893
+    },
+    {
+      "label": "thm:private-constrained-cut",
+      "line": 3962
+    },
+    {
+      "label": "lem:hc-bicriteria-recursion",
+      "line": 4087
+    },
+    {
+      "label": "eq:hc-opt-levels",
+      "line": 4106
+    },
+    {
+      "label": "eq:hc-one-split-charge",
+      "line": 4122
+    },
+    {
+      "label": "thm:private-hierarchical-clustering",
+      "line": 4151
+    },
+    {
+      "label": "eq:hc-cut-decomposition",
+      "line": 4179
+    },
+    {
+      "label": "eq:hc-uniform-transfer",
+      "line": 4187
+    },
+    {
+      "label": "eq:hc-balanced-transfer",
+      "line": 4196
+    },
+    {
+      "label": "sec:lower_bound",
+      "line": 4341
+    },
+    {
+      "label": "lem:ekkl-discrepancy",
+      "line": 4357
+    },
+    {
+      "label": "thm:lower_bound",
+      "line": 4378
+    },
+    {
+      "label": "eq:lb_compatible_decoder",
+      "line": 4443
+    },
+    {
+      "label": "eq:lb_private_reconstruction",
+      "line": 4480
+    },
+    {
+      "label": "eq:lb_success_reconstruction",
+      "line": 4494
+    },
+    {
+      "label": "eq:lb_discrepancy",
+      "line": 4514
+    },
+    {
+      "label": "eq:lb_master_inequality",
+      "line": 4550
+    }
+  ]
+}
