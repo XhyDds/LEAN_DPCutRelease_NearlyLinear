@@ -1,8 +1,8 @@
-import DPCut.SDPLSWProblem
+import DPCut.VerifiedLinearAlgebra
 
-/-! Conditional SDP implementation, with an operational timeout and independent
-restarts. This file proves the reduction from LSW; no approximate-SDP solver is
-assumed. -/
+/-! SDP reduction using the formal LSW parameter, reported-time truncation
+and independent restarts. Feasibility, approximation and assigned-cost bounds
+are proved here; the timed interface does not certify operational solver runtime. -/
 set_option autoImplicit false
 noncomputable section
 open Matrix MeasureTheory ProbabilityTheory Metric
@@ -10,69 +10,37 @@ open scoped RealInnerProductSpace ENNReal
 namespace DPCut
 attribute [local instance] Classical.propDecidable
 
-abbrev FeasibleMatrix (n : ℕ) := {X : Mat n // X ∈ feasible n}
-
 namespace SDPCoordinates
 
-variable {n : ℕ} (hn : 2 ≤ n) {lam B : ℝ} (hlam : 0 ≤ lam) (hB : 0 ≤ B)
-
-def safeMatrix (x : Space n) : FeasibleMatrix n :=
-  if h : x ∈ body n then ⟨lift x, h.2⟩ else ⟨1, feasible_one hn⟩
-
-lemma safeMatrix_val (x : Space n) :
-    (safeMatrix hn x).val = if x ∈ body n then lift x else 1 := by
-  unfold safeMatrix
-  split_ifs <;> rfl
-
-/-- The fallback guard can be evaluated using the permitted PSD primitive and
-one norm comparison; it does not need a universal quadratic-form search. -/
-lemma mem_body_iff_primitive (P : LinearAlgebraPrimitives) (x : Space n) :
-    x ∈ body n ↔ ‖x‖ ≤ 2*(n:ℝ) ∧ P.psdWitness n (slack x) = none := by
-  constructor
-  · intro hx
-    exact ⟨by simpa using hx.1, (P.none_iff n (slack x) (slack_hermitian x)).mpr
-      ((slack_posSemidef_iff x).mpr hx.2)⟩
-  · rintro ⟨hx,hp⟩
-    exact ⟨by simpa using hx, (slack_posSemidef_iff x).mp
-      ((P.none_iff n (slack x) (slack_hermitian x)).mp hp)⟩
-
-lemma safeMatrix_val_primitive (P : LinearAlgebraPrimitives) (x : Space n) :
-    (safeMatrix hn x).val =
-      if ‖x‖ ≤ 2*(n:ℝ) ∧ P.psdWitness n (slack x) = none then lift x else 1 := by
-  rw [safeMatrix_val, mem_body_iff_primitive P x]
-  split_ifs <;> rfl
-
-lemma measurable_safeMatrix : Measurable (safeMatrix hn) := by
-  refine (show Measurable (fun x => (safeMatrix hn x).val) from ?_).subtype_mk
-  simp_rw [safeMatrix_val]
-  exact Measurable.ite (body_compact n).isClosed.measurableSet
-    (continuous_lift n).measurable measurable_const
-
-def decode (o : Option (Space n)) : FeasibleMatrix n :=
-  o.elim ⟨1, feasible_one hn⟩ (safeMatrix hn)
-
-lemma measurable_decode : Measurable (decode hn) :=
-  measurable_option_elim _ (measurable_safeMatrix hn)
+variable (I : LinearAlgebraImplementation) {n : ℕ} (hn : 2 ≤ n)
+  {lam B : ℝ} (hlam : 0 ≤ lam) (hB : 0 ≤ B)
 
 def solve (A : TimedAlgorithm (Weights n) (Space n)) (fuel repeats : ℕ)
     (D : Weights n) : CostedLaw (FeasibleMatrix n) :=
-  (costedRestart (A.run fuel D) repeats).map (decode hn) (oracleCharge n)
+  (costedRestart (A.run fuel D) repeats).mapArithmetic (decodeArithmetic I hn)
+
+lemma solve_law (A : TimedAlgorithm (Weights n) (Space n)) (fuel repeats : ℕ)
+    (D : Weights n) :
+    (solve I hn A fuel repeats D).law =
+      (costedRestart (A.run fuel D) repeats).law.map (decode hn) := by
+  simp only [solve, CostedLaw.mapArithmetic_law, decodeArithmetic_value]
 
 lemma measurable_solve (A : TimedAlgorithm (Weights n) (Space n)) (fuel repeats : ℕ) :
-    Measurable (fun D => (solve hn A fuel repeats D).law) := by
-  simp only [solve, CostedLaw.map_law, costedRestart_law]
+    Measurable (fun D => (solve I hn A fuel repeats D).law) := by
+  simp only [solve_law, costedRestart_law]
   exact (Measure.measurable_map _ (measurable_decode hn)).comp
     (measurable_repeatUntil (A.measurable_run fuel) measurable_snd repeats)
 
 instance solve_probability (A : TimedAlgorithm (Weights n) (Space n)) (fuel repeats : ℕ)
-    (D : Weights n) : IsProbabilityMeasure (solve hn A fuel repeats D).law := by
-  simp only [solve, CostedLaw.map_law, costedRestart_law]
+    (D : Weights n) : IsProbabilityMeasure (solve I hn A fuel repeats D).law := by
+  simp only [solve_law, costedRestart_law]
   letI := repeatUntil_probability (A.run fuel D).law measurable_id repeats
   exact Measure.isProbabilityMeasure_map (measurable_decode hn).aemeasurable
 
 lemma solve_cost (A : TimedAlgorithm (Weights n) (Space n)) (fuel repeats : ℕ) (D : Weights n) :
-    (solve hn A fuel repeats D).cost ≤ repeats * ((fuel : ℝ≥0∞) + 1) + oracleCharge n :=
-  add_le_add_right (costedRestart_cost _ (A.run_cost fuel D) repeats) _
+    (solve I hn A fuel repeats D).cost ≤ repeats * ((fuel : ℝ≥0∞) + 1) + oracleCharge n :=
+  CostedLaw.mapArithmetic_cost_le _ _
+    (costedRestart_cost _ (A.run_cost fuel D) repeats) (decodeArithmetic_cost I hn)
 
 lemma measurable_objective (lam : ℝ) (D : Weights n) : Measurable (objective lam D) := by
   unfold objective
@@ -102,7 +70,7 @@ lemma solve_failure (A : TimedAlgorithm (Weights n) (Space n)) {ε : ℝ}
     (ha : ∀ D, ∀ᵐ z ∂A.completed D, LSW.Accurate (problem hn hlam hB) ε D z.2)
     {fuel : ℕ} (hfuel : 0 < fuel) (repeats : ℕ) (D : Weights n)
     (hmean : A.expectedCost D ≤ (fuel : ℝ≥0∞) / 2) :
-    (solve hn A fuel repeats D).law
+    (solve I hn A fuel repeats D).law
       {X | ε < optimum lam (boundedObjective B D) - objective lam (boundedObjective B D) X.val}
       ≤ (1 / 2 : ℝ≥0∞) ^ repeats := by
   let Q (o : Option (Space n)) := o.elim True (LSW.Accurate (problem hn hlam hB) ε D)
@@ -118,7 +86,7 @@ lemma solve_failure (A : TimedAlgorithm (Weights n) (Space n)) {ε : ℝ}
   have hrep : ∀ᵐ o ∂(costedRestart (A.run fuel D) repeats).law, Q o := by
     rw [costedRestart_law]
     exact repeatUntil_ae measurable_id hQ trivial hrun repeats
-  rw [solve, CostedLaw.map_law, Measure.map_apply (measurable_decode hn)
+  rw [solve_law, Measure.map_apply (measurable_decode hn)
     (measurableSet_gap ε (boundedObjective B D))]
   apply (measure_mono_ae ?_).trans (A.restart_failure_le hfuel D hmean repeats)
   filter_upwards [hrep] with o ho
@@ -142,7 +110,7 @@ def sdpLSWScale (n : ℕ) (lam B ε : ℝ) : ℝ :=
 
 /-- LSW specialized to the paper's log-determinant SDP, including exact
 feasibility and approximate optimality. No exact SDP solve is assumed. -/
-theorem lsw_sdp (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) :
+theorem lsw_sdp (hLSW : LSWStatement) (I : LinearAlgebraImplementation) :
     ∃ C : ℝ, 0 < C ∧ ∃ degree : ℕ,
     ∀ (n : ℕ) (hn : 2 ≤ n) (lam B ε : ℝ) (hlam : 0 ≤ lam) (hB : 0 ≤ B),
       0 < ε → ε ≤ 1/2 →
@@ -155,11 +123,11 @@ theorem lsw_sdp (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) :
   intro n hn lam B ε hlam hB hε hεhalf
   have hdim : 1 ≤ Fintype.card (Fin n × Fin n) := by simp; nlinarith
   obtain ⟨A, ha, hc⟩ := h (Fin n × Fin n) inferInstance hdim (Weights n) inferInstance
-    (SDPCoordinates.problem hn hlam hB) (SDPCoordinates.oracle hn hlam hB P) ε hε hεhalf
+    (SDPCoordinates.problem hn hlam hB) (SDPCoordinates.oracle hn hlam hB I) ε hε hεhalf
   refine ⟨A, ha, ?_⟩
   intro D
   have hs : LSW.scale (SDPCoordinates.problem hn hlam hB)
-      (SDPCoordinates.oracle hn hlam hB P) ε = sdpLSWScale n lam B ε := by
+      (SDPCoordinates.oracle hn hlam hB I) ε = sdpLSWScale n lam B ε := by
     simp only [LSW.scale, SDPCoordinates.problem, SDPCoordinates.oracle, sdpLSWScale,
       Fintype.card_prod, Fintype.card_fin, Nat.cast_mul]
     congr 2

@@ -8,7 +8,7 @@ open MeasureTheory ProbabilityTheory
 namespace DPCut
 
 theorem theorem36 (o : InducedARVContract) : PrivateHierarchyStatement := by
-  obtain ⟨CA, hCA, hrelease⟩ := theorem1_statistical
+  obtain ⟨CA, hCA, hrelease⟩ := theorem1_statistical_exists
   refine ⟨o.balance, 512 * hierarchyRatioCoefficient o, CA, 2, o.balance_pos, o.balance_le,
     mul_pos (by norm_num) (hierarchyRatioCoefficient_pos o), hCA, by norm_num, ?_⟩
   intro η hη hη₁

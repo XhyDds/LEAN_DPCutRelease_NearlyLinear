@@ -1,5 +1,5 @@
 import DPCut.SDPArithmeticOracle
-import DPCut.SDPLSWAlgorithm
+import DPCut.SDPDecode
 
 /-! The optimizer's final feasibility check is implemented by the same
 scalar PSD algorithm. No semantic set-membership primitive remains. -/

@@ -25,6 +25,9 @@ structure ExactSDPOracleCost where
   coefficient_pos : 0 < coefficient
   charge_le : ∀ n, charge n ≤ ENNReal.ofReal (coefficient * (1 + (n : ℝ)) ^ degree)
 
+/-- A probability law with an assigned cost. Constructors and `pure` allow
+arbitrary laws/values at cost zero; this is accounting data, not an executable
+language that derives running time. -/
 structure CostedLaw (α : Type) [MeasurableSpace α] where
   law : Measure α
   cost : ℝ≥0∞

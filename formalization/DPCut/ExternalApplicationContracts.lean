@@ -4,7 +4,9 @@ import DPCut.ApplicationPostprocessing
 /-!
 Explicit contracts for the external algorithms cited in Appendix C.
 These structures are theorem inputs, not axioms or asserted implementations.
-Costs use the previously selected real-arithmetic model. Parameters such as
+Costs use the assigned-cost model: an arbitrary kernel can be supplied at
+cost zero, so these contracts do not enforce actual polynomial running time.
+Parameters such as
 approximation slack, privacy budgets, and fixed k are fixed before choosing the
 polynomial coefficient and degree. The reductions must still prove their own
 privacy, accuracy, amplification, and additional operation counts.
@@ -14,7 +16,8 @@ noncomputable section
 open MeasureTheory ProbabilityTheory
 namespace DPCut
 
-/-- A uniform family of external algorithms with an explicit polynomial charge. -/
+/-- A family of external kernels with an explicit polynomial assigned charge.
+This interface does not require an operational implementation of that charge. -/
 structure PolynomialGraphAlgorithm (Output : ℕ → Type) [∀ n, MeasurableSpace (Output n)] where
   kernel : (n : ℕ) → Kernel (Weights n) (Output n)
   markov : ∀ n, IsMarkovKernel (kernel n)

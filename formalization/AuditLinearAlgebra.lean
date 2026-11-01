@@ -1,6 +1,7 @@
 import DPCut.Theorem1LSW
 
-/-! The implementation record is constructed; only LSW remains a hypothesis.
+/-! Audit the constructed matrix/sampling certificates and the main theorem.
+This checks axiom dependencies, not whether costs describe execution time.
 The global audit also traverses every helper and generated declaration. -/
 #check DPCut.theorem1_of_lsw
 #check DPCut.verifiedLinearAlgebra

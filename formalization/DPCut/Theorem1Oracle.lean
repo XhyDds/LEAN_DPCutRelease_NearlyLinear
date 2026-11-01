@@ -20,7 +20,7 @@ inductive RealReleaseProgram where
 def RealReleaseProgram.runExact {n : ℕ} (sdp : ExactSDPOracleCost) (_program : RealReleaseProgram)
     (p : Parameters) (w : Weights n) : CostedLaw (Weights n) := costedFullRelease sdp p w
 
-/-- Operational cost is the costed program's supremum over all intermediate values.
+/-- Assigned cost is the costed program's supremum over all intermediate values.
 Realization is exact equality to its interpreted probability law. -/
 def realArithmeticExactOracleModel (sdp : ExactSDPOracleCost) : ComputationalModel where
   Program := RealReleaseProgram
@@ -28,7 +28,7 @@ def realArithmeticExactOracleModel (sdp : ExactSDPOracleCost) : ComputationalMod
   cost _ program p w := (program.runExact sdp p w).cost
 
 /-- **Theorem 1**, relative to the explicit costed exact-SDP oracle contract.
-Privacy and accuracy are unconditional; the runtime clause uses this model. -/
+Privacy and accuracy are unconditional; the cost clause uses assigned oracle prices, not execution steps. -/
 theorem theorem1_exact_oracle (sdp : ExactSDPOracleCost) :
     MainTheoremStatement (realArithmeticExactOracleModel sdp) := by
   obtain ⟨Ctime, hCtime, degree, htime⟩ := fullCostBound_polynomial sdp
@@ -54,7 +54,7 @@ def realArithmeticOracleModel (sdp : ApproxSDPOracle) : ComputationalModel where
 
 /-- **Theorem 1 with approximate optimization.** The mechanism actually samples
 from the approximate covariance. Both its statistical guarantees and its uniform
-worst-case polynomial runtime are proved relative to the explicit primitive contract. -/
+polynomial assigned-cost bound are proved relative to the explicit primitive contract. -/
 theorem theorem1 (sdp : ApproxSDPOracle) : MainTheoremStatement (realArithmeticOracleModel sdp) := by
   obtain ⟨Ctime, hCtime, degree, htime⟩ := approxReleaseCostBound_polynomial sdp
   refine ⟨(2 : ℝ) ^ 178, Ctime, degree, RealReleaseProgram.fullRelease, by positivity, hCtime, ?_⟩

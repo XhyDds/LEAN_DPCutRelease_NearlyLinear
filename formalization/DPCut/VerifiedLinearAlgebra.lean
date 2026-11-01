@@ -1,5 +1,6 @@
 import DPCut.SDPArithmeticFallback
 import DPCut.VerifiedGaussianSampling
+import DPCut.CostedArithmetic
 
 /-! A constructed implementation certificate for every linear-algebra block
 used by the LSW-based release. This is data with proved fields, not an external
@@ -43,5 +44,40 @@ def verifiedLinearAlgebra : LinearAlgebraImplementation where
   gaussianProgram _ := verifiedGaussianBatch
   gaussian_law _ := verifiedGaussianBatch_law
   gaussian_cost _ := verifiedGaussianBatch_cost
+
+namespace SDPCoordinates
+
+/-- The LSW oracle executes the supplied counted implementation. Its public
+charge is accepted only with the implementation's proved operation bound. -/
+def oracle {n : ℕ} (hn : 2 ≤ n) {lam B : ℝ} (hlam : 0 ≤ lam) (hB : 0 ≤ B)
+    (I : LinearAlgebraImplementation) : LSW.Oracle (problem hn hlam hB) where
+  answer := I.oracleProgram n lam B
+  measurable_answer := by
+    simp_rw [I.oracle_value n hn]
+    exact measurable_answer I.primitives lam B
+  correct := by
+    intro D x
+    rw [I.oracle_value n hn]
+    exact answer_correct hn hlam hB I.primitives D x
+  charge := oracleCharge n
+  cost_le := I.oracle_cost n lam B
+
+/-- Execute the counted decoder, using semantic agreement only to certify
+feasibility of its output. -/
+def decodeArithmetic (I : LinearAlgebraImplementation) {n : ℕ} (hn : 2 ≤ n)
+    (o : Option (Space n)) : Arithmetic (FeasibleMatrix n) :=
+  ⟨⟨(I.decodeProgram n o).value, by
+      rw [I.decode_value n hn]
+      exact (decode hn o).property⟩, (I.decodeProgram n o).steps⟩
+
+lemma decodeArithmetic_value (I : LinearAlgebraImplementation) {n : ℕ} (hn : 2 ≤ n)
+    (o : Option (Space n)) : (decodeArithmetic I hn o).value = decode hn o :=
+  Subtype.ext (I.decode_value n hn o)
+
+lemma decodeArithmetic_cost (I : LinearAlgebraImplementation) {n : ℕ} (hn : 2 ≤ n)
+    (o : Option (Space n)) : (decodeArithmetic I hn o).steps ≤ oracleCharge n :=
+  I.decode_cost n o
+
+end SDPCoordinates
 
 end DPCut

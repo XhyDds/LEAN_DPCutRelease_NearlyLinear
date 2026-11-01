@@ -3,16 +3,20 @@
 This project formalizes the current manuscript,
 *Differentially Private Cut Release in Polynomial Time With Nearly-Linear Additive
 Error*. Lemmas 10–23, Theorem 38, and Theorem 1's statistical conclusion are proved. At the
-user's explicit choice, the current computational theorem is
+user's explicit choice, the current cost-accounting theorem is
 `theorem1_of_lsw : MainTheoremStatement (realArithmeticLSWModel hLSW)`.
-LSW is the only external algorithmic hypothesis. PSD separation and dense linear
-algebra now have verified scalar implementations and operation counts. The SDP reduction,
-public magnitude and precision bounds, timeouts, restarts, actual mechanism,
-privacy, accuracy and worst-case polynomial runtime are proved in Lean.
+It takes the formal `LSWStatement` parameter. PSD separation and dense linear
+algebra have proved scalar formulas, semantic refinement and compositional
+cost bounds. The SDP reduction, public magnitude and precision bounds, timeout
+laws, restarts, privacy, accuracy and polynomial bounds on assigned costs are
+proved in Lean. Actual real-arithmetic running time is not certified:
+`CostedLaw` and `Arithmetic` store costs, and `TimedAlgorithm` allows arbitrary
+measurable functions with reported completion time zero. The formal LSW
+parameter does not enforce execution of the cited algorithm or operation counts.
 The earlier approximate/exact-SDP contract theorems are retained. The release
 includes the paper's public noisy-mass cap. The separately proved deterministic
 ellipsoid feasibility algorithm remains available; completing an arithmetic-only
-optimizer is a different task from this conditional LSW result.
+optimizer and connecting costs to execution steps remain separate obligations.
 
 The original specification was based on `STOC2027.tex`, SHA-256
 `2ef841b6fabb55ceb08c4f5b9d6a8548959dc79132cb686c468744d0be2dd592`.
@@ -26,27 +30,30 @@ The initial Appendix C review used manuscript
 SHA-256 `86cc5dde2485592bc2985e6ed59e60760d71fb5ed323711afb707550ef91d5a9`.
 These hashes identify historical review snapshots. `source_inventory.json`,
 `SourceStatements.tex`, and `LemmaComparison.tex` are regenerated from the current
-manuscript and record its current hash. The source-to-Lean mapping below uses
-the current statement locations.
+manuscript and record its current hash. The source-to-Lean mapping below records
+the reviewed associations; use the generated files for current line locations.
 In particular, the Lemma 14 target now uses the current source's `δ₁ < 1/2`.
 The existing manuscript edits and `section5.patch` were left untouched. The older
 audit is useful context but is not the source of the theorem statements. Neither
 `pureDP/` nor `codex6/` is part of this formalization.
 
-## Conditional LSW implementation of Theorem 1
+## Approximate release and LSW-style cost accounting
 
-The external statement is `LSWStatement` in `LSWStatement.lean`: a polynomial
-consequence of Lee–Sidford–Wong (arXiv:1508.04874v2), Theorem 42, Section 10.1.
+The proposition `LSWStatement` in `LSWStatement.lean` is intended to encode a
+polynomial consequence of Lee–Sidford–Wong (arXiv:1508.04874v2), Theorem 42,
+Section 10.1, using the current abstract cost interface.
 It concerns full-dimensional compact convex bodies and concave objectives with
 exact separation/supergradient oracles. Uniform constants are quantified before
-all problem data. Its scale includes dimension, caller-supplied oracle charge,
-log outer/inner radius, and log objective range/accuracy. The timed measurable
-program interpretation is explicit in this hypothesis. No inhabitant of this
-proposition is asserted and no axiom is introduced.
+all problem data. Its scale includes dimension, the proved bound on the counted oracle's cost,
+log outer/inner radius, and log objective range/accuracy. Completion-time labels
+and timeout laws are explicit, but the interface does not derive these labels
+from execution steps. Its zero-time loophole remains even with the counted
+oracle connected. Passing this proposition as a hypothesis does not isolate an
+operational LSW runtime theorem. No new axiom is introduced.
 
 | Module | Verified responsibility |
 | --- | --- |
-| `TimedAlgorithm` | Operational timeout law, Markov bound, independent restarts and costs |
+| `TimedAlgorithm` | Timeout law for reported times, Markov bound, independent restarts and assigned costs |
 | `SDPLinearOracle`, `SDPObjectiveBounds` | Log-det supergradient, concavity, eigenvalue/log-det and objective range bounds; semantic interface instantiated by verified linear algebra |
 | `SDPCoordinates` | Full-dimensional bounded redundant `n²` coordinates; radius `1/4` inner ball, radius `2n` outer ball; every feasible matrix represented |
 | `SDPSeparation`, `SDPLSWProblem` | Correct measurable ball/PSD separation and first-order oracle for the actual objective |
@@ -55,7 +62,7 @@ proposition is asserted and no axiom is introduced.
 | `LSWSolverFamily` | Construction of the solver family from LSW; no additional approximate-SDP assumption |
 | `BoundedObjectiveRelease` | Objective guard inactive on every reached history under public mass clipping |
 | `RandomizedOracleTV`, `LSWWitness` | Covariance error plus solver-failure TV bound for actual witness draws |
-| `LSWRelease`, `Theorem1LSW` | Actual release kernel, privacy/accuracy transfer, uniform worst-case runtime, conditional main theorem |
+| `LSWRelease`, `Theorem1LSW` | Actual release kernel, privacy/accuracy transfer and uniform bounds on assigned costs |
 
 The public objective bound is
 `massCap + (1+gamma)*card(Edge n)*U`, with the parameters of the bounded release.
@@ -82,9 +89,11 @@ scalar implementations. The complete implementation is a constructed
 `LinearAlgebraImplementation`, not an external theorem argument. The model
 retains its outer vector/arithmetic macro semantics and exact scalar operations,
 elementary functions and sampling conventions. This is not a bit-operation
-result. Appendix C's separate cost certificates are not silently migrated.
+result, and it does not establish operational real-arithmetic runtime either.
+Appendix C uses the same cost-accounting interface and limitation.
 `AuditLSW.lean` and `AuditLinearAlgebra.lean` check the new chain; the global audit
-rejects `sorryAx` and all nonstandard axioms. Only the explicit LSW hypothesis remains.
+rejects `sorryAx` and all nonstandard axioms. These audits do not establish that
+the computational model captures execution time.
 
 ## Verified linear-algebra implementation
 
@@ -93,11 +102,13 @@ rejects `sorryAx` and all nonstandard axioms. Only the explicit LSW hypothesis r
 | `MatrixElimination`, `MatrixPSDAlgorithm` | Scalar Schur identities; PSD decision with a negative quadratic-form witness; singular/zero-pivot cases; measurability; totalization by symmetrization |
 | `MatrixSPDAlgorithm`, `MatrixFactorAlgorithm` | Positive-definite solves, inverse, determinant and Cholesky factor, with exact matrix identities |
 | `ScalarArithmetic`, `FiniteArithmetic` | Counted scalar operations, comparisons, finite sums and materialized vectors |
-| `MatrixArithmetic`, `MatrixSPDArithmetic` | Operational refinement and uniform polynomial counts for every elimination algorithm |
+| `Arithmetic`, `CostedArithmetic` | Shared counted-result type and composition of random programs with counted deterministic computations |
+| `MatrixArithmetic`, `MatrixSPDArithmetic` | Semantic refinement and uniform polynomial counter bounds for every elimination algorithm |
 | `SDPArithmeticCoordinates`, `SDPArithmeticData` | Explicit adjoint formula, coordinate lift, objective matrix, norm, objective guard, gradient and separation normal |
 | `SDPArithmeticOracle`, `SDPArithmeticFallback` | Exact agreement with the LSW oracle and feasible fallback, within the existing public charges |
+| `SDPDecode` | Semantic feasible-output/fallback specification, independent of its implementation |
 | `MatrixGaussianAlgorithm`, `ScalarGaussianSampling`, `VerifiedGaussianSampling` | Equality of covariance laws, sequential scalar draws, and a factor-based Gaussian batch within the existing charge |
-| `VerifiedLinearAlgebra`, `Theorem1LSW` | Constructed implementation certificate; Theorem 1 with only `LSWStatement` supplied externally |
+| `VerifiedLinearAlgebra`, `Theorem1LSW` | Constructed implementation certificate connected to the release's law and assigned-cost proofs |
 
 PSD testing uses a negative diagonal directly; a zero pivot with a nonzero
 off-diagonal row entry yields an explicit two-coordinate negative witness;
@@ -113,6 +124,20 @@ the polynomial-time target. The full oracle still fits its former public charge.
 The sampler uses a finite sequence of scalar normal draws, followed by the
 factor transform; its exact law equality allows the existing privacy and utility
 proofs to be reused. No exact matrix-square-root or spectral algorithm is assumed.
+
+The LSW oracle interface now requires a counted answer program and its cost
+bound. `VerifiedLinearAlgebra` supplies that program, semantic refinement and
+cost proof to the oracle. `LSWSolverFamily` preserves the entire implementation
+when choosing the external algorithm family; `SDPLSWAlgorithm.solve` runs its
+counted decoder through `mapArithmetic`. `ApproxSDPCosted.trials` uses the
+constructed Gaussian sampler directly, and its distribution/cost proofs consume
+the sampler's verified bounds. Both Theorem 1 and the application runtimes follow
+these paths. `AuditImplementation` checks these dependencies without treating
+proofs merely stored in the implementation record as evidence of use.
+The `Arithmetic` type itself remains a value/count pair. These connections
+verify the use of the concrete formulas and counters; they do not restrict all
+programs to permitted scalar instructions. That restriction and its execution
+semantics are still required for an operational runtime theorem.
 
 ## What compiles and what it means
 
@@ -199,14 +224,14 @@ proofs to be reused. No exact matrix-square-root or spectral algorithm is assume
 | `SharedPrivacy` | Privacy with outer coefficient 80 and stopping coefficient 2^120; one shared `ParameterChoiceStatement` witness |
 | `MainParameters`, `MainCalibration` | Exact half-budgets, clipping adjacency, positive U, logarithmic absorption, and uniform final coefficient 2^166 |
 | `FullReleaseLaw`, `FullReleasePrivacy`, `FullReleaseUtility` | Measurable full Markov kernel, normalization/nonnegativity, composed privacy, and joint all-cut accuracy |
-| `Theorem1` | Unconditional `theorem1_statistical : MainStatisticalStatement` for the actual release law |
+| `Theorem1` | Unconditional `theorem1_statistical` explicitly names `fullReleaseLaw`; `theorem1_statistical_exists` proves `MainStatisticalStatement` as a corollary |
 | `CostedProgram`, `CostedProgramLaw`, `CostedProgramBounds` | Explicit primitive-cost semantics, exact law equality, and worst-case bounds for every finite loop and fallback |
 | `RuntimeParameters`, `PolynomialRuntime` | Public horizons/sample sizes bounded polynomially in `runtimeScale`; uniform polynomial cost closure |
 | `OracleReplacement`, `OracleReplacementMeasurable`, `OracleReplacementLaw` | Release loops parameterized by a Markov witness kernel; measurability, probability, and exact identification with the original mechanism |
-| `OracleReplacementTV`, `OracleReplacementCost` | Adaptive TV accumulation and the original operational block-cost semantics with a replaceable witness implementation |
+| `OracleReplacementTV`, `OracleReplacementCost` | Adaptive TV accumulation and the original assigned block-cost semantics with a replaceable witness implementation |
 | `ApproxSDPOracle`, `ApproxSDPCosted` | Explicit feasible approximate optimizer contract; actual costed Gaussian/Laplace witness trials |
 | `ApproximationTransfer` | Half-budget calibration, error-constant absorption and high-probability TV transfer, independent of rational rounding |
-| `ApproxSDPPrecision`, `ApproxSDPRelease`, `ApproxSDPRuntime` | Public accuracy request, full-law TV bound, unchanged final privacy/failure budgets, and worst-case polynomial runtime including precision |
+| `ApproxSDPPrecision`, `ApproxSDPRelease`, `ApproxSDPRuntime` | Public accuracy request, full-law TV bound, unchanged final privacy/failure budgets, and polynomial assigned-cost bounds including precision |
 | `Theorem1LSW` | `theorem1_of_lsw` proves `MainTheoremStatement (realArithmeticLSWModel hLSW)` from the explicit LSW hypothesis and verified linear algebra |
 | `Theorem1Oracle` | `theorem1 : MainTheoremStatement (realArithmeticOracleModel sdp)` under `ApproxSDPOracle`; previous theorem retained as `theorem1_exact_oracle` |
 | `CubeMoments`, `BipartiteDiscrepancy` | Finite Rademacher second/fourth moments, absolute-moment lower bound, and rectangular discrepancy |
@@ -542,17 +567,21 @@ particular, a false proposition can also compile. Do not convert the targets to
 axioms, or infer the main theorem from an abstract oracle whose assumptions simply
 restate the desired conclusion.
 
-`MainStatisticalStatement` specifies the complete probabilistic upper-bound
-conclusion. `MainTheoremStatement model` adds a single uniform program and a
-uniform polynomial runtime bound. The current conditional proof uses
+`theorem1_statistical` explicitly names `fullReleaseLaw` and fixes the uniform
+error constant. Its corollary `theorem1_statistical_exists` proves the existential
+target `MainStatisticalStatement`. `MainTheoremStatement model` adds a single uniform program and a
+uniform polynomial bound on the supplied cost function. The current proof uses
 `realArithmeticLSWModel`; the earlier `realArithmeticOracleModel` theorem remains
 a separate solver-contract result.
 Application statements similarly specify statistical content; their external
 algorithms' efficiency is a separate obligation.
 
-## Theorem 1: completed statistical proof and requested oracle runtime model
+## Theorem 1: completed statistical proof and oracle cost model
 
-The exact existing `MainStatisticalStatement` is proved with `C = 2^166`.
+`theorem1_statistical` bundles measurability, normalization, nonnegative output,
+privacy, and simultaneous all-cut accuracy for the specified `fullReleaseLaw`,
+with constant `2^166`. The existential `MainStatisticalStatement` follows as
+`theorem1_statistical_exists`.
 `SharedPrivacy` redoes the privacy ledger for `outerUtilityConstants`, so privacy
 and utility use the same mechanism, horizons, and stopping threshold.
 `parameter_choice : ParameterChoiceStatement` records this compatibility.
@@ -587,7 +616,7 @@ Laplace, score and acceptance operations of FindWitness. The block prices remain
 `card(Edge n)+100(n+1)^2` for preprocessing. `OracleReplacementCost` follows the
 original recursive aggregate/inner/outer loops; bind takes a supremum over every
 intermediate value, including failures. `costedApproxRelease_law` identifies the
-operational law with the mechanism that uses the approximate covariance. A final
+output law with the mechanism that uses the approximate covariance. A final
 coordinatewise max with zero guarantees nonnegative outputs and fixes the ideal
 output almost surely. Accuracy-request calculation and this projection are
 charged vector blocks.
@@ -620,8 +649,8 @@ The earlier contract, implementation and result are retained as
 verified linear algebra directly. Both Theorem 1 versions use noisy-mass clipping as
 described below. Those earlier runtime proofs use uniform optimizer charges. The LSW result
 above instead proves bounded objectives and includes their magnitude dependence.
-A fully numerical or finite-bit implementation remains outside this
-real-arithmetic oracle result.
+These costs are not tied to an execution language. Operational real-arithmetic
+and finite-bit running-time guarantees remain outside this result.
 
 ## Noisy-mass clipping and deterministic ellipsoid implementation
 
@@ -668,9 +697,11 @@ Euclidean spaces, linear equivalences, determinants, and Lebesgue measure:
    the point-separation oracle remains an explicit algorithm input.
 
 The following is the separate arithmetic-only ellipsoid work plan, retained as
-background. The conditional LSW route above has completed the SDP geometry,
+background. The LSW-style cost-accounting route above has completed the SDP geometry,
 measurability, precision, guarding, and integration obligations using its own
-full-dimensional redundant coordinates. The ellipsoid route would still need:
+full-dimensional redundant coordinates. Both routes still need execution
+semantics that derive costs from permitted steps and exclude arbitrary free
+functions. The ellipsoid route would additionally need:
 
 1. Encode symmetric unit-diagonal matrices in their affine space of dimension
    `card(Edge n)`, with the Frobenius metric. Prove the radius-1/2 inner ball and
@@ -694,7 +725,8 @@ full-dimensional redundant coordinates. The ellipsoid route would still need:
 6. Substitute the resulting solver and reprove the polynomial total runtime.
    Exact real sampling, elementary functions, and the remaining priced blocks
    must stay explicit in the computational model; this is not a bit-operation
-   implementation. Appendix C's legacy optimizer interface is a separate migration.
+   implementation. The application cost certificates would need the same
+   connection to execution semantics.
 
 `AuditEllipsoid.lean` covers the geometric and algorithmic theorems and the mass
 clipping certificates; `AuditAll.lean` checks their imported helpers as well.
@@ -801,7 +833,7 @@ for proofs, is the dependency guide.
 
 | Source label and line | Lean target or definition | Dependencies and scope |
 | --- | --- | --- |
-| `thm:main`, 336; proof 3068–3136 | `theorem1_statistical`; `theorem1_of_lsw` proves `MainTheoremStatement (realArithmeticLSWModel hLSW)` | Statistical conclusion unconditional; `theorem1_of_lsw` derives the optimizer from LSW with verified linear algebra; full machine compilation remains separate |
+| `thm:main`, 336; proof 3068–3136 | `theorem1_statistical`; `theorem1_of_lsw` proves `MainTheoremStatement (realArithmeticLSWModel hLSW)` | Statistical conclusion unconditional; `theorem1_of_lsw` uses the formal LSW parameter and connected matrix routines to bound assigned costs; operational runtime is not certified |
 | `cor:cc-intro`, 490 | `CorrelationClusteringStatement` | CC black-box reduction and the cited 1.3865+τ approximation, with τ=1/4000 |
 | `cor:maxcut-intro`, 510 | `PrivateMaxCutStatement` | Max-k-Cut transfer, Goemans–Williamson and success amplification |
 | `def:DP`, 1458 | `Adjacent`, `DP`, `EdgeDP` | Finite edge coordinates, Borel output events; ordered adjacent pairs provide both DP directions |
@@ -1307,12 +1339,14 @@ The signed Laurent–Massart bound needed here is now proved as Lemma 15.
 8. **Statistical upper theorem completed.** `theorem1_statistical` composes
    preprocessing and bounded release, verifies both budgets and exponent 7,
    and supplies a measurable nonnegative Markov kernel.
-9. **Conditional LSW runtime and linear-algebra implementations completed.**
-   `theorem1_of_lsw hLSW` proves the full target with a derived randomized
-   approximate solver, public worst-case timeouts, and verified linear-algebra
-   operations within the public budgets. LSW itself remains the only external
-   algorithmic hypothesis. Full machine compilation is separate; a bit model
-   would also need sampling and rounding bridges.
+9. **Approximate-release cost accounting and matrix integration completed.**
+   `theorem1_of_lsw hLSW` proves the target in the assigned-cost model, with
+   reported-time cutoffs and connected linear-algebra counters. The statistical
+   and refinement guarantees are proved. Operational real-arithmetic runtime
+   remains unverified because `TimedAlgorithm` permits zero-time representations
+   of arbitrary measurable functions. A suitable execution semantics is needed
+   before an external LSW theorem can close that gap. A bit model would also
+   need sampling and rounding bridges.
 10. **Independent branches completed.** Theorem 38 and Appendix C's numbered
     statistical results are proved. C.4's unnumbered consequences include exact
     denominator bounds and the odd-order isolated-vertex bisection reduction.
@@ -1339,7 +1373,9 @@ The signed Laurent–Massart bound needed here is now proved as Lemma 15.
     remain uniform in k and the source success probability where required.
     The model
     retains real scalar sampling primitives, including Bernoulli rounding;
-    these results do not certify bit-operation implementations. The Appendix C
+    these results do not certify operational real-arithmetic or bit-operation
+    running times. External application contracts also permit arbitrary kernels
+    with assigned cost zero. The Appendix C
     audit also rejects transitive dependencies on either legacy SDP contract.
 
 ## Approximate-optimization prerequisites

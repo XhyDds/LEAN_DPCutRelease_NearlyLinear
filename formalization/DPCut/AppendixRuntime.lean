@@ -1,10 +1,11 @@
 import DPCut.HierarchyCosted
 import DPCut.LSWApplicationGuarantees
 
-/-! Polynomial real-model implementations of the actual Appendix C reductions.
-Each certificate includes equality of the costed program's law to the statistical
-kernel implemented using LSW. LSW and cited external application algorithm
-contracts remain explicit; no exact SDP oracle is assumed. -/
+/-! Polynomial assigned-cost bounds for the specified Appendix C reductions.
+Each certificate identifies the costed program's law with the approximate kernel.
+The formal LSW and external application contracts remain explicit. Their costs
+are not derived from execution steps, so these results do not certify actual
+polynomial running time of the solver, external algorithms or full reductions. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory

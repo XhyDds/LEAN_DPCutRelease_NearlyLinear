@@ -2,10 +2,12 @@ import DPCut.CostedProgram
 import DPCut.RepeatUntil
 import Mathlib.MeasureTheory.Integral.Lebesgue.Markov
 
-/-! A timed randomized algorithm, including its operational timeout interface.
-The completion law alone is not a running-time implementation: `run`, `run_law`,
-and `run_cost` explicitly supply the bounded execution and its cost certificate.
-This interface is used for the external cutting-plane algorithm. -/
+/-! Completion-time labels and compatible timeout laws for a random procedure.
+`run_law` relates truncation to the reported completion time, and `run_cost`
+bounds an assigned cost. Neither field derives time from execution steps or
+requires oracle calls. Any measurable function can be represented with time
+zero. Thus this interface supports timeout/probability and cost-accounting
+arguments, but does not certify operational runtime of the cutting-plane solver. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory
@@ -66,7 +68,7 @@ lemma timeout_failure (fuel : ℕ) (θ : Θ) :
   ext z
   simp [timeoutResult]
 
-/-- Markov's inequality converts the expected-time guarantee into a timeout
+/-- Markov's inequality converts the expected reported-time bound into a timeout
 failure probability at most one half. -/
 theorem timeout_failure_le_half {fuel : ℕ} (hfuel : 0 < fuel) (θ : Θ)
     (hmean : A.expectedCost θ ≤ (fuel : ℝ≥0∞) / 2) :

@@ -1,11 +1,12 @@
 import DPCut.LSWRelease
 import DPCut.VerifiedLinearAlgebra
 
-/-! Theorem 1 conditional only on Lee--Sidford--Wong in the real model.
-Linear algebra is implemented by verified scalar elimination. The constructed
-`verifiedLinearAlgebra` certificate proves the first-order oracle and fallback
-operation counts, and refines covariance Gaussian sampling to scalar draws.
-The external LSW hypothesis is a proposition argument, not an axiom. -/
+/-! Theorem 1's statistical guarantees and polynomial assigned-cost bound
+under the formal `LSWStatement` parameter. The connected scalar elimination,
+fallback and Gaussian routines have proved semantic refinement and counter
+bounds. The timed solver interface still permits zero-time representations of
+arbitrary measurable functions. This result therefore does not certify actual
+real-arithmetic running time or an operational version of the LSW algorithm. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory
@@ -52,9 +53,10 @@ lemma Program.run_valid {n : ℕ} (F : CuttingPlaneFamily) (program : Program)
     program.run F p w = LSWRelease.run F hn p hp w := by
   simp only [Program.run, dif_pos (show 2 ≤ n ∧ p.Valid from ⟨hn,hp⟩)]
 
-/-- The cost is the supremum over all intermediate values, including timeout
-branches. Gaussian/Laplace sampling, elementary real operations, and the stated
-linear-algebra blocks have the explicit prices used in the costed program. -/
+/-- Assigned cost uses a supremum over all intermediate values, including
+timeout branches. The matrix and Gaussian routines use their composed counters;
+scalar draws and outer blocks retain explicit prices. The model does not enforce
+that these costs count execution steps. -/
 def model (F : CuttingPlaneFamily) : ComputationalModel where
   Program := Program
   realizes n program p M := ∀ w : Weights n, M w = (program.run F p w).law
@@ -78,29 +80,29 @@ lemma main (F : CuttingPlaneFamily) : MainTheoremStatement (model F) := by
 
 end LSWRelease
 
-/-- The real model whose optimizer is derived from LSW, rather than assumed
-as a deterministic approximate-SDP primitive. -/
-def realArithmeticLSWPrimitiveModel (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) : ComputationalModel :=
-  LSWRelease.model (cuttingPlaneFamily hLSW P)
+/-- Cost-accounting model using the solver family supplied by `LSWStatement`
+and the given matrix implementation. Its costs are not operational runtimes. -/
+def realArithmeticLSWImplementationModel (hLSW : LSWStatement) (I : LinearAlgebraImplementation) : ComputationalModel :=
+  LSWRelease.model (cuttingPlaneFamily hLSW I)
 
-/-- The earlier modular theorem, retained for alternative primitive implementations. -/
-theorem theorem1_of_lsw_with_primitives (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) :
-    MainTheoremStatement (realArithmeticLSWPrimitiveModel hLSW P) :=
-  LSWRelease.main (cuttingPlaneFamily hLSW P)
+/-- The modular theorem requires a counted implementation and its cost certificates. -/
+theorem theorem1_of_lsw_with_implementation (hLSW : LSWStatement) (I : LinearAlgebraImplementation) :
+    MainTheoremStatement (realArithmeticLSWImplementationModel hLSW I) :=
+  LSWRelease.main (cuttingPlaneFamily hLSW I)
 
 /-- The instantiated real model. Its linear-algebra macro charges are justified
 by the constructed scalar-operation implementation certificate. -/
 def realArithmeticLSWModel (hLSW : LSWStatement) : ComputationalModel :=
-  realArithmeticLSWPrimitiveModel hLSW verifiedLinearAlgebra.primitives
+  realArithmeticLSWImplementationModel hLSW verifiedLinearAlgebra
 
-/-- **Theorem 1, with LSW as the only external algorithmic hypothesis.**
-A single program has worst-case polynomial cost, nonnegative outputs,
-`(epsilon,delta)` edge-DP, and the simultaneous all-cut error bound.
-The model retains exact real scalar operations and sampling. No exact SDP
-optimizer, PSD separation, matrix inverse, determinant, or covariance-factor
-implementation is supplied as an external assumption. -/
+/-- **Theorem 1's statistical guarantees and polynomial assigned-cost bound.**
+A single specified program has nonnegative outputs, `(epsilon,delta)` edge-DP
+and the simultaneous all-cut error bound. The formal `LSWStatement` parameter
+supplies the solver family; matrix routines and covariance sampling are connected
+to their constructed certificates. The permissive cost/timing interfaces do not
+establish actual real-arithmetic running time. -/
 theorem theorem1_of_lsw (hLSW : LSWStatement) :
     MainTheoremStatement (realArithmeticLSWModel hLSW) :=
-  theorem1_of_lsw_with_primitives hLSW verifiedLinearAlgebra.primitives
+  theorem1_of_lsw_with_implementation hLSW verifiedLinearAlgebra
 
 end DPCut

@@ -82,7 +82,7 @@ theorem application_release {η ε : ℝ} (hη : 0 < η) (hη1 : η ≤ 1 / 4) (
         EdgeDP M ε ((n : ℝ)⁻¹ ^ 10) ∧ ∀ w, Nonnegative w →
           HighProbability (M w) ((n : ℝ)⁻¹ ^ 10)
             (fun h => AllCuts w h η (C * n * Real.log n ^ 7)) := by
-  obtain ⟨CA, hCA, hmain⟩ := theorem1_statistical
+  obtain ⟨CA, hCA, hmain⟩ := theorem1_statistical_exists
   let C := CA * (applicationLogCoefficient η ε ^ 7 / (η * min ε 1))
   have hC : 0 < C := by
     dsimp [C]

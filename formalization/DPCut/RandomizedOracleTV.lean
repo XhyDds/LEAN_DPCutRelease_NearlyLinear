@@ -119,7 +119,7 @@ def run (S : Weights n → CostedLaw (FeasibleMatrix n)) (B : ℝ) (D r : Weight
   .charge (vectorBlockCost n) (if r = 0 then .pure none else
     (S D).bind fun X => ApproxSDPCosted.trials o X.val (boundedObjective B D) r o.K)
 
-include he in
+include hn he in
 lemma run_law (S : Weights n → CostedLaw (FeasibleMatrix n)) (B : ℝ) (D r : Weights n)
     [IsProbabilityMeasure (S D).law] :
     (run o S B D r).law = (S D).law.bind (fun X => approximateFindWitness o (boundedObjective B D) r X.val) := by
@@ -127,13 +127,14 @@ lemma run_law (S : Weights n → CostedLaw (FeasibleMatrix n)) (B : ℝ) (D r : 
   by_cases hr : r = 0
   · simp [hr, approximateFindWitness, Measure.bind_const]
   · simp only [if_neg hr, CostedLaw.bind_law, approximateFindWitness,
-      ApproxSDPCosted.trials_law o he]
+      fun X : FeasibleMatrix n => ApproxSDPCosted.trials_law o he X.val
+        (feasible_posDef hn X.property)]
 
 include hn he in
 lemma measurable_run (S : Weights n → CostedLaw (FeasibleMatrix n))
     (hS : Measurable (fun D => (S D).law)) [∀ D, IsProbabilityMeasure (S D).law] (B : ℝ) :
     Measurable (fun q : Weights n × Weights n => (run o S B q.1 q.2).law) := by
-  simp_rw [run_law o he]
+  simp_rw [run_law hn o he]
   let f : (Weights n × Weights n) × FeasibleMatrix n → (Weights n × Weights n) × FeasibleMatrix n :=
     fun q => ((boundedObjective B q.1.1,q.1.2),q.2)
   have hf : Measurable f :=
@@ -147,7 +148,7 @@ include hn he in
 lemma run_probability (S : Weights n → CostedLaw (FeasibleMatrix n))
     [∀ D, IsProbabilityMeasure (S D).law] (B : ℝ) (D r : Weights n) :
     IsProbabilityMeasure (run o S B D r).law := by
-  rw [run_law o he]
+  rw [run_law hn o he]
   letI (X : FeasibleMatrix n) := witness_probability o he (boundedObjective B D) r X
   apply probability_bind
   exact (measurable_witness hn o he).comp
@@ -174,7 +175,7 @@ lemma law_tv (hl : 0 < o.lam) (hk : 0 < o.k) {μ ρ B : ℝ}
     (D r : Weights n) :
     TVClose (run o S B D r).law (findWitness o (boundedObjective B D) r)
       (ρ + o.K * (2 * Real.sqrt o.k * μ)) := by
-  rw [run_law o he]
+  rw [run_law hn o he]
   letI (X : FeasibleMatrix n) := witness_probability o he (boundedObjective B D) r X
   letI := findWitness_probability o he (boundedObjective B D) r
   have hm : Measurable (fun X : FeasibleMatrix n => approximateFindWitness o (boundedObjective B D) r X.val) :=

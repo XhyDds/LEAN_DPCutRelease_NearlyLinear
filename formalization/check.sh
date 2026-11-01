@@ -20,6 +20,7 @@ lake env lean AuditLemma23.lean
 lake env lean AuditTheorem1.lean
 lake env lean AuditLSW.lean
 lake env lean AuditLinearAlgebra.lean
+lake env lean AuditImplementation.lean
 lake env lean AuditTheorem38.lean
 lake env lean AuditAppendixC.lean
 lake env lean AuditEllipsoid.lean

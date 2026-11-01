@@ -62,13 +62,21 @@ ADDITIONAL_STATEMENTS = {
 }
 
 PROOF_DECLARATIONS = {
-    "thm:main": [("Theorem1", "theorem1_statistical"), ("Theorem1LSW", "theorem1_of_lsw")],
+    "thm:main": [("Theorem1", "theorem1_statistical"),
+                 ("Theorem1", "theorem1_statistical_exists"),
+                 ("Theorem1LSW", "theorem1_of_lsw")],
     "cor:cc-intro": [("Theorem30", "private_correlation_clustering")],
     "lem:advanced-composition": [("AdaptiveComposition", "advanced_composition_statement")],
     "thm:cc-black-box-reduction": [("CCApplication", "theorem30")],
     "cor:cc-fixed-k": [("Theorem30", "corollary31")],
     "rem:maxcut-tightness": [("Remark33", "remark33")],
     "thm:lower_bound": [("Theorem38", "theorem38")],
+}
+
+# The strengthened statistical theorem names the mechanism directly; the
+# separate existential corollary still references MainStatisticalStatement.
+CONCRETE_PROOF_REFERENCES = {
+    ("thm:main", "Theorem1", "theorem1_statistical"): ["fullReleaseLaw"],
 }
 
 # Combined implementation theorems strengthen the statistical targets above.
@@ -94,31 +102,38 @@ BACKGROUND_RESULTS = {
 
 APPLICATION_CONVENTION = (
     r"The original Lean target records the statistical guarantee. The combined implementation theorem "
-    r"also provides a polynomial cost bound for the actual approximate program, conditional on LSW "
-    r"and the cited external algorithm contracts. "
+    r"also provides a polynomial assigned-cost bound for the specified approximate program, using "
+    r"the formal LSW parameter and cited external algorithm contracts. These interfaces allow "
+    r"arbitrary kernels with cost zero; actual running times of the external algorithms and full "
+    r"reduction are not certified. "
     r"It makes $\widetilde O(n)$ explicit as $C n(\log n)^d$ and high probability "
     r"as failure at most $C_{\rm fail}/n^2$, with constants chosen before $n$."
 )
 
 NOTES = {
     "thm:main": (
-        r"The first target contains the statistical guarantee; the second also contains a worst-case polynomial runtime bound. "
-        r"The current theorem is \texttt{theorem1\_of\_lsw}, in \texttt{realArithmeticLSWModel}, with "
-        r"\texttt{LSWStatement} as its only external algorithmic hypothesis. This hypothesis is a polynomial "
-        r"specialization of Lee--Sidford--Wong, Theorem~42 (arXiv:1508.04874v2), including a measurable "
-        r"timed-algorithm interpretation. The SDP reduction, public mass clipping and objective bounds, "
-        r"approximation precision, bounded restarts, and privacy/utility transfer are proved internally. "
-        r"\texttt{verifiedLinearAlgebra} constructs the PSD oracle, matrix operations, fallback check, and "
-        r"covariance Gaussian sampler, with correctness and operation-count certificates; no matrix routine "
-        r"or approximate-SDP solver is an additional hypothesis. The model retains exact scalar operations, "
-        r"elementary real functions, scalar sampling, and the stated outer-block cost conventions. "
-        r"The parameter ranges, nonnegative output, simultaneous cut bound with logarithmic exponent $7$, "
-        r"and polynomial runtime match the paper's theorem. The proof uses the LSW route described in the "
-        r"paper's footnote, including the identity covariance fallback when restarts are exhausted. "
-        r"Solver failures are included in the total-variation budget. The footnote's sharper $\widetilde O(n^8)$ runtime "
-        r"is not formalized. The notation appendix expands the current external hypothesis, implementation "
-        r"certificate, and model. The older exact-SDP contract is retained only as a historical interface; "
-        r"the public application runtime proofs use LSW."
+        r"The statistical theorem \texttt{theorem1\_statistical} explicitly names "
+        r"\texttt{fullReleaseLaw}, bundling measurability, normalization, nonnegative "
+        r"output, privacy and all-cut accuracy with constant $2^{166}$. "
+        r"The first target is its existential corollary \texttt{theorem1\_statistical\_exists}. "
+        r"The second target adds a polynomial bound on the "
+        r"supplied model's cost. The current \texttt{theorem1\_of\_lsw} uses "
+        r"\texttt{realArithmeticLSWModel} and the proposition parameter \texttt{LSWStatement}, "
+        r"intended to specialize Lee--Sidford--Wong, Theorem~42 (arXiv:1508.04874v2). "
+        r"Its \texttt{TimedAlgorithm} interface permits arbitrary measurable functions with "
+        r"reported time zero. Thus this is cost accounting, not an operational runtime theorem "
+        r"conditional only on the cited solver. The SDP geometry, public mass clipping, objective "
+        r"and precision bounds, reported-time truncation, restarts and privacy/utility transfer "
+        r"are proved internally. The constructed matrix routines, fallback decoder and covariance "
+        r"Gaussian sampler are connected to the program through semantic refinement and counter "
+        r"bounds. The value/count interfaces themselves do not enforce permitted instructions; "
+        r"scalar sampling and outer-block prices remain model conventions. The parameter ranges, "
+        r"nonnegative output and simultaneous cut guarantee with logarithmic exponent $7$ match "
+        r"the paper. The identity covariance fallback matches the implementation footnote and "
+        r"its failure probability is included in the total-variation budget. Neither actual "
+        r"polynomial runtime nor the footnote's sharper $\widetilde O(n^8)$ bound is certified "
+        r"by the current model. The notation appendix expands the interfaces and certificates. "
+        r"The older exact-SDP contract and the application contracts share the assigned-cost limitation."
     ),
     "cor:cc-intro": APPLICATION_CONVENTION + r" Here \texttt{id} allows up to $n$ clusters, so the optimum is unrestricted.",
     "cor:maxcut-intro": APPLICATION_CONVENTION + r" The ratio is $878/1000-\xi$, with at most two clusters.",
@@ -138,12 +153,12 @@ NOTES = {
     "lem:utility": r"\texttt{boundedError} contains the two additive terms, including exponent $7$. The multiplicative constant is quantified before all inputs and parameters. Lean also records nonnegative output on the accuracy event.",
     "lem:holder_interpolation": r"The first target covers the full exponent range, including $q=\infty$. The second is the $(1,2,4)$ instance used in the witness argument. Lean uses the extended $L_p$ seminorm and makes measurability explicit.",
     "lem:pythagorean": r"The paper states this cited auxiliary result without restricting the underlying space to a finite set. Lean proves the finite-domain specialization indexed by \texttt{Fin m} that the paper's applications require; formalizing the full generality of this background result is outside the validation scope. Membership and minimality of the projection are hypotheses; the nonnegative extended KL divergence also implies the final distance-reduction inequality.",
-    "lem:capped-unit-release": r"This Lean target contains the statistical guarantee and capped output support. As in the paper's proof, \texttt{cappedRunConfig} keeps $\gamma$ unchanged and multiplies the main stopping threshold by ten, ensuring $M_{\mathrm{stop}}\geq100(B+\tau_2/\gamma)$. The error is \texttt{C * mainError n p}, with fixed logarithmic exponent seven and a universal coefficient; \texttt{lemma29} chooses $C=2^{126}$. The combined theorem \texttt{CappedLSW.capped\_release\_of\_lsw} proves capped support, privacy, utility with coefficient $2^{138}$, and polynomial cost in the full parameter scale, conditional only on LSW.",
+    "lem:capped-unit-release": r"This Lean target contains the statistical guarantee and capped output support. As in the paper's proof, \texttt{cappedRunConfig} keeps $\gamma$ unchanged and multiplies the main stopping threshold by ten, ensuring $M_{\mathrm{stop}}\geq100(B+\tau_2/\gamma)$. The error is \texttt{C * mainError n p}, with fixed logarithmic exponent seven and a universal coefficient; \texttt{lemma29} chooses $C=2^{126}$. The combined theorem \texttt{CappedLSW.capped\_release\_of\_lsw} proves capped support, privacy, utility with coefficient $2^{138}$, and polynomial assigned cost in the full parameter scale under the formal LSW parameter. This does not certify operational running time.",
     "thm:cc-black-box-reduction": APPLICATION_CONVENTION + r" The source algorithm is a family of Markov kernels with success probability at least $p_0$. The constants are chosen after $\rho,\xi,\varepsilon$ and before $p_0$ and the source algorithm, matching the paper's uniform additive bound. The theorem takes the cited private baseline as an explicit external input.",
     "cor:cc-fixed-k": APPLICATION_CONVENTION + r" The error coefficient, failure coefficient, and logarithmic exponent are chosen after $\xi,\varepsilon$ and before $k$, matching the paper's additive bound independent of $k$. The theorem takes the cited private baseline and fixed-$k$ PTAS family as explicit external inputs; running-time constants may still depend on $k$.",
     "thm:private-max-k-cut": APPLICATION_CONVENTION + r" Constants precede $k$ in the quantifiers, recording independence of the additive term from $k$. The second target is the deterministic transfer inequality used by the reduction; the Max-Cut specialization also appears in Corollary~\ref{cor:maxcut-intro}.",
     "rem:maxcut-tightness": r"The Lean theorem proves the remark's lower bound $B\geq\lfloor n/8\rfloor/100$ with the same parameter ranges, including $\varepsilon=0$, $\delta=0$, and $\beta=0$. The remark's explanatory argument is retained in the paper excerpt. No external algorithmic hypothesis is needed.",
-    "thm:private-constrained-cut": r"The Lean statement is conditional on a release mechanism with additive error $A$ and on a nonprivate approximation kernel. It preserves the exact approximation factors and failure bound $\beta+\tau$. Instantiating the release with Theorem~\ref{thm:main} gives the paper's $A_\eta$. The combined general theorem instantiates the approximate LSW program and includes a uniform polynomial runtime bound. The application specialization additionally calibrates the error at $\delta=\beta=n^{-10}$.",
+    "thm:private-constrained-cut": r"The Lean statement is conditional on a release mechanism with additive error $A$ and on a nonprivate approximation kernel. It preserves the exact approximation factors and failure bound $\beta+\tau$. Instantiating the release with Theorem~\ref{thm:main} gives the paper's $A_\eta$. The combined general theorem instantiates the approximate LSW program and includes a uniform polynomial assigned-cost bound, subject to the cost-model limitation above. The application specialization additionally calibrates the error at $\delta=\beta=n^{-10}$.",
     "lem:hc-bicriteria-recursion": r"Lean expresses the recursive algorithm's hypothesis as properties of its output tree: \texttt{BalancedHierarchy} and \texttt{RecursiveApproximation}. The approximation constant may depend on $b$, and is quantified before $b'$, $a$, and the graph.",
     "thm:private-hierarchical-clustering": r"The original Lean target records the statistical guarantee, with failure at most $C_{\rm fail}/n^2$. The combined theorem includes a polynomial realization using LSW and the weighted ARV contract. It evaluates the additive error at $\delta=\beta=n^{-10}$ and assumes $0<\varepsilon\leq1$, as in the paper. The additive coefficient may depend on $\eta$; the balance and ratio constants are universal. The second target is the deterministic hierarchy-transfer inequality used in the analysis.",
     "lem:ekkl-discrepancy": r"Simple graphs are encoded by binary edge weights. The maximum-over-disjoint-sets conclusion is expressed by the existence of disjoint finite sets attaining the required lower bound.",
@@ -190,11 +205,11 @@ CONTEXT = [
     ("Inner success and outer stopping laws", "Utility", ["innerRoundLaw", "outerStopsLaw"]),
     ("Computational-model interface", "Statements", ["ComputationalModel", "runtimeScale"]),
     ("Costed laws and real-model block charges", "CostedProgram", ["CostedLaw", "vectorBlockCost", "gaussianBatchCost"]),
-    ("Timed algorithms and bounded execution", "TimedAlgorithm", ["timeoutResult", "TimedAlgorithm", "expectedCost"]),
-    ("External LSW hypothesis: problem, oracle, and guarantee", "LSWStatement", [
+    ("Reported completion times and timeout laws", "TimedAlgorithm", ["timeoutResult", "TimedAlgorithm", "expectedCost"]),
+    ("Abstract LSW specification: problem, oracle, and guarantee", "LSWStatement", [
         "Space", "Problem", "Reply", "CorrectReply", "Oracle", "Accurate", "scale", "Statement", "DPCut.LSWStatement"]),
     ("Linear-algebra interface implemented internally", "SDPLinearOracle", ["LinearAlgebraPrimitives", "linearAlgebraPrimitiveCost"]),
-    ("Scalar-operation cost record", "ScalarArithmetic", ["Arithmetic"]),
+    ("Value/counter record (not an instruction language)", "Arithmetic", ["Arithmetic"]),
     ("Constructed linear-algebra implementation certificate", "VerifiedLinearAlgebra", ["LinearAlgebraImplementation", "verifiedLinearAlgebra"]),
     ("Solver family constructed from LSW", "LSWSolverFamily", ["CuttingPlaneFamily", "cuttingPlaneFamily"]),
     ("Public objective bound", "SDPRuntimeData", ["publicObjectiveBound"]),
@@ -202,7 +217,7 @@ CONTEXT = [
     ("Public optimizer precision", "ApproxSDPPrecision", ["approximationBudget", "approximationRadius"]),
     ("Nonnegative-output post-processing", "ApproxSDPRelease", ["positiveWeights"]),
     ("Current LSW release program and real-arithmetic model", "Theorem1LSW", [
-        "Program", "Program.run", "model", "realArithmeticLSWPrimitiveModel", "realArithmeticLSWModel"]),
+        "Program", "Program.run", "model", "realArithmeticLSWImplementationModel", "realArithmeticLSWModel"]),
     ("Legacy exact-SDP contract (historical interface)", "CostedProgram", ["ExactSDPOracleCost"]),
     ("Finite KL and capped support", "Definitions", ["discreteMeasure"]),
     ("Finite KL and capped support (continued)", "Applications", ["CappedOn", "IsDistribution", "finiteKL"]),
@@ -404,7 +419,11 @@ statements; it does not re-run or certify Lean proofs.
 Cited and standard background lemmas are marked below and included for statement
 comparison. Proving their full generality within this project is not required
 to validate this paper's contributions. External hypotheses used by the
-formalized proofs remain explicit.
+formalized proofs remain explicit. Cost conclusions bound assigned counters and
+reported times. The current interfaces do not derive these from execution steps:
+in particular, \texttt{TimedAlgorithm} permits any measurable function at time
+zero. The formal LSW and application contracts therefore do not certify actual
+polynomial running time, even in the real-arithmetic model.
 
 Paper statement and algorithm references retain the manuscript's numbering.
 Equation and section references are shown by their source labels, and citations
@@ -474,7 +493,8 @@ def main():
             proofs.append((f"Lemma{number}", f"lemma{number}"))
         for proof_module, proof_name in proofs:
             signature = theorem_signature(declaration(proof_module, proof_name)[0])
-            if not any(re.search(r"\b" + re.escape(name) + r"\b", signature) for name in names):
+            references = CONCRETE_PROOF_REFERENCES.get((label, proof_module, proof_name), names)
+            if not any(re.search(r"\b" + re.escape(name) + r"\b", signature) for name in references):
                 raise ValueError(f"{proof_module}.{proof_name} does not refer to the mapped target")
             blocks += [r"\paragraph{Corresponding theorem declaration (proof omitted).}",
                        listing(proof_module, proof_name, signature=True)]

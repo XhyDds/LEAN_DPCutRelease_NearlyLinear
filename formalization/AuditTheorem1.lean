@@ -3,6 +3,7 @@ import DPCut.Theorem1Oracle
 /-! The oracle cost contract is an explicit theorem parameter, not an axiom.
 Only propext, Classical.choice, and Quot.sound are expected transitively. -/
 #check DPCut.theorem1_statistical
+#check DPCut.theorem1_statistical_exists
 #check DPCut.theorem1
 #check DPCut.theorem1_exact_oracle
 #print axioms DPCut.cutRelease_shared_private
@@ -18,6 +19,7 @@ Only propext, Classical.choice, and Quot.sound are expected transitively. -/
 #print axioms DPCut.fullRelease_accuracy_add
 #print axioms DPCut.fullRelease_utility
 #print axioms DPCut.theorem1_statistical
+#print axioms DPCut.theorem1_statistical_exists
 #print axioms DPCut.costedFindTrials_law
 #print axioms DPCut.costedAggregateLoop_law
 #print axioms DPCut.costedInnerLoop_law

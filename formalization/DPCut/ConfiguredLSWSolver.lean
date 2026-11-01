@@ -104,16 +104,16 @@ def algorithm : TimedAlgorithm (Weights n) (SDPCoordinates.Space n) :=
   F.algorithm n hn lam B (accuracy n N) hl hB (accuracy_bounds hn hN).1 (accuracy_bounds hn hN).2
 
 def solve (D : Weights n) : CostedLaw (FeasibleMatrix n) :=
-  SDPCoordinates.solve hn (algorithm F hn hN hl hB) (fuel F n N lam B) (repeats N) D
+  SDPCoordinates.solve F.implementation hn (algorithm F hn hN hl hB) (fuel F n N lam B) (repeats N) D
 
 lemma measurable_solve : Measurable (fun D => (solve F hn hN hl hB D).law) :=
-  SDPCoordinates.measurable_solve hn _ _ _
+  SDPCoordinates.measurable_solve F.implementation hn _ _ _
 
 instance solve_probability (D : Weights n) : IsProbabilityMeasure (solve F hn hN hl hB D).law :=
-  SDPCoordinates.solve_probability hn _ _ _ _
+  SDPCoordinates.solve_probability F.implementation hn _ _ _ _
 
 lemma solve_cost (D : Weights n) : (solve F hn hN hl hB D).cost ≤ cost F n N lam B :=
-  SDPCoordinates.solve_cost hn _ _ _ _
+  SDPCoordinates.solve_cost F.implementation hn _ _ _ _
 
 lemma solve_failure (hl1 : 1 ≤ lam) (D : Weights n) :
     (solve F hn hN hl hB D).law {X | lam*((N:ℝ)⁻¹/2)^2/(2*(n:ℝ)^4) <
@@ -121,7 +121,7 @@ lemma solve_failure (hl1 : 1 ≤ lam) (D : Weights n) :
         ENNReal.ofReal ((N:ℝ)⁻¹/2) := by
   have hm := (F.expected n hn lam B (accuracy n N) hl hB
     (accuracy_bounds hn hN).1 (accuracy_bounds hn hN).2 D).trans (fuel_mean F hn hN hl hB)
-  have hf := SDPCoordinates.solve_failure hn hl hB (algorithm F hn hN hl hB)
+  have hf := SDPCoordinates.solve_failure F.implementation hn hl hB (algorithm F hn hN hl hB)
     (F.accurate n hn lam B (accuracy n N) hl hB (accuracy_bounds hn hN).1 (accuracy_bounds hn hN).2)
     (show 0 < fuel F n N lam B by unfold fuel; omega) (repeats N) D hm
   have hg : accuracy n N ≤ lam*((N:ℝ)⁻¹/2)^2/(2*(n:ℝ)^4) := by

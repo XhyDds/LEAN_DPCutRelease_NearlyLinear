@@ -1,8 +1,9 @@
 import DPCut.SDPRuntimeData
 import DPCut.ApproxSDPRelease
 
-/-! A uniform family of approximate solvers derived from the explicit LSW
-hypothesis. Public timeouts turn expected runtime into worst-case runtime. -/
+/-! A uniform family of approximate solvers obtained from `LSWStatement`.
+Public cutoffs convert expected reported-time bounds into uniform assigned-cost
+bounds. The interface does not connect reported time to execution steps. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory
@@ -10,6 +11,7 @@ open scoped ENNReal
 namespace DPCut
 
 structure CuttingPlaneFamily where
+  implementation : LinearAlgebraImplementation
   coefficient : ℝ
   coefficient_pos : 0 < coefficient
   degree : ℕ
@@ -22,16 +24,21 @@ structure CuttingPlaneFamily where
     (algorithm n hn lam B ε hlam hB hε hεhalf).expectedCost D ≤
       ENNReal.ofReal (coefficient * sdpLSWScale n lam B ε ^ degree)
 
-/-- This family is constructed from LSW and the allowed linear-algebra
-primitives; it is not an additional external solver assumption. -/
-theorem cuttingPlaneFamily_exists (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) :
-    Nonempty CuttingPlaneFamily := by
-  obtain ⟨C,hC,d,h⟩ := lsw_sdp hLSW P
+/-- This family is constructed from LSW and the verified linear-algebra
+implementation; it is not an additional external solver assumption. -/
+theorem cuttingPlaneFamily_exists (hLSW : LSWStatement) (I : LinearAlgebraImplementation) :
+    ∃ F : CuttingPlaneFamily, F.implementation = I := by
+  obtain ⟨C,hC,d,h⟩ := lsw_sdp hLSW I
   choose A ha hc using h
-  exact ⟨⟨C,hC,d,A,ha,hc⟩⟩
+  exact ⟨⟨I,C,hC,d,A,ha,hc⟩, rfl⟩
 
-def cuttingPlaneFamily (hLSW : LSWStatement) (P : LinearAlgebraPrimitives) : CuttingPlaneFamily :=
-  Classical.choice (cuttingPlaneFamily_exists hLSW P)
+def cuttingPlaneFamily (hLSW : LSWStatement) (I : LinearAlgebraImplementation) : CuttingPlaneFamily :=
+  Classical.choose (cuttingPlaneFamily_exists hLSW I)
+
+@[simp] lemma cuttingPlaneFamily_implementation (hLSW : LSWStatement)
+    (I : LinearAlgebraImplementation) :
+    (cuttingPlaneFamily hLSW I).implementation = I :=
+  Classical.choose_spec (cuttingPlaneFamily_exists hLSW I)
 
 def solverScale (n : ℕ) (p : Parameters) : ℝ :=
   sdpLSWScale n (fullRunConfig n (precisionParameters p)).oracle.lam
@@ -66,16 +73,16 @@ def releaseAlgorithm : TimedAlgorithm (Weights n) (SDPCoordinates.Space n) :=
     (solverAccuracy_bounds hn hp).1 (solverAccuracy_bounds hn hp).2
 
 def solve (D : Weights n) : CostedLaw (FeasibleMatrix n) :=
-  SDPCoordinates.solve hn (F.releaseAlgorithm hn p hp) (solverFuel F n p) (solverRestarts n p) D
+  SDPCoordinates.solve F.implementation hn (F.releaseAlgorithm hn p hp) (solverFuel F n p) (solverRestarts n p) D
 
 lemma measurable_solve : Measurable (fun D => (F.solve hn p hp D).law) :=
-  SDPCoordinates.measurable_solve hn _ _ _
+  SDPCoordinates.measurable_solve F.implementation hn _ _ _
 
 instance solve_probability (D : Weights n) : IsProbabilityMeasure (F.solve hn p hp D).law :=
-  SDPCoordinates.solve_probability hn _ _ _ _
+  SDPCoordinates.solve_probability F.implementation hn _ _ _ _
 
 lemma solve_cost (D : Weights n) : (F.solve hn p hp D).cost ≤ solverCost F n p :=
-  SDPCoordinates.solve_cost hn _ _ _ _
+  SDPCoordinates.solve_cost F.implementation hn _ _ _ _
 
 lemma solve_failure (D : Weights n) :
     (F.solve hn p hp D).law {X |
@@ -94,7 +101,7 @@ lemma solve_failure (D : Weights n) :
     (by linarith [(approxConfig_bounds hn hp).lam_lower])
     (publicObjectiveBound_nonneg hn (precisionParameters_valid hp))
     (solverAccuracy_bounds hn hp).1 (solverAccuracy_bounds hn hp).2
-  have hf := SDPCoordinates.solve_failure hn _ _ (F.releaseAlgorithm hn p hp) ha
+  have hf := SDPCoordinates.solve_failure F.implementation hn _ _ (F.releaseAlgorithm hn p hp) ha
     (solverFuel_pos F n p) (solverRestarts n p) D hm
   have hg := solverAccuracy_le_gap (n:=n) (p:=p)
     (show 1 ≤ (fullRunConfig n (precisionParameters p)).oracle.lam by linarith [(approxConfig_bounds hn hp).lam_lower])

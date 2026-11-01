@@ -19,7 +19,7 @@ theorem theorem34 : ∃ CA : ℝ, 0 < CA ∧ ∀ n, 2 ≤ n →
         ∀ w, Nonnegative w → HighProbability (R w) (p.beta + τ)
           (fun S => S ∈ F' ∧ cut w S ≤ ρ * (1 + p.gamma) / (1 - p.gamma) * constrainedOptimum w F +
             (ρ + 1) / (1 - p.gamma) * (CA * mainError n p)) := by
-  obtain ⟨CA, hCA, hm⟩ := theorem1_statistical
+  obtain ⟨CA, hCA, hm⟩ := theorem1_statistical_exists
   refine ⟨CA, hCA, fun n hn p hp F F' hF hF' ρ τ hρ hτ hτ1 K hK hAlg => ?_⟩
   obtain ⟨M, hM, hg, hDP, hu⟩ := hm n hn p hp
   letI := hM

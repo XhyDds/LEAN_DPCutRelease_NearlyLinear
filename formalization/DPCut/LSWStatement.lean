@@ -1,18 +1,19 @@
 import DPCut.TimedAlgorithm
+import DPCut.Arithmetic
 import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!
-External dependency: a polynomial consequence of Lee--Sidford--Wong (2015),
-arXiv:1508.04874v2, Theorem 42 (Section 10.1), in the costed real model.
+Abstract solver specification inspired by Lee--Sidford--Wong (2015),
+arXiv:1508.04874v2, Theorem 42 (Section 10.1). It is a proposition parameter,
+not an added axiom. The exact-oracle, bounded-domain concave-maximization
+specialization retains oracle charges and logarithmic geometry/accuracy terms.
 
-This is a proposition, not an axiom and not an inhabited solver contract.
-It is the exact-oracle, bounded-domain concave-maximization specialization of
-their convex-minimization result. The objective range converts their relative
-accuracy to absolute accuracy. We retain the oracle charge and logarithmic
-geometry/accuracy dependence, and weaken the precise asymptotic bound to a
-uniform polynomial. The timed-program interface makes measurability and the
-operational meaning of timeout explicit; these are part of the external
-algorithm interpretation, not consequences of a bare optimizer-existence claim.
+The current `TimedAlgorithm` interface supplies completion-time labels and
+compatible timeout laws, but does not derive them from execution steps or
+oracle calls. Arbitrary measurable functions can be represented at time zero.
+Consequently this specification does not certify an operational LSW runtime,
+even though the concrete SDP oracle's counter and refinement are proved.
+Its use supports the release's statistical and assigned-cost conclusions only.
 -/
 set_option autoImplicit false
 noncomputable section
@@ -51,13 +52,14 @@ def CorrectReply {ι : Type} [Fintype ι] {Θ : Type} [MeasurableSpace Θ] (P : 
   | .inr (v, g) => x ∈ P.body ∧ v = P.value θ x ∧
       ∀ y ∈ P.body, P.value θ y ≤ v + ⟪g, y - x⟫
 
-/-- The caller supplies this oracle and its uniform charge. LSW does not
-establish the implementation cost of a problem-specific separation routine. -/
+/-- The caller supplies a counted oracle and proves its uniform cost bound.
+LSW does not establish the cost of a problem-specific separation routine. -/
 structure Oracle {ι : Type} [Fintype ι] {Θ : Type} [MeasurableSpace Θ] (P : Problem ι Θ) where
-  answer : Θ × Space ι → Reply ι
-  measurable_answer : Measurable answer
-  correct : ∀ θ x, CorrectReply P θ x (answer (θ, x))
+  answer : Θ × Space ι → Arithmetic (Reply ι)
+  measurable_answer : Measurable (fun q => (answer q).value)
+  correct : ∀ θ x, CorrectReply P θ x (answer (θ, x)).value
   charge : ℕ
+  cost_le : ∀ q, (answer q).steps ≤ charge
 
 def Accurate {ι : Type} [Fintype ι] {Θ : Type} [MeasurableSpace Θ] (P : Problem ι Θ)
     (ε : ℝ) (θ : Θ) (x : Space ι) : Prop :=
@@ -70,7 +72,7 @@ def scale {ι : Type} [Fintype ι] {Θ : Type} [MeasurableSpace Θ] (P : Problem
   1 + Fintype.card ι + O.charge + Real.log (P.outerRadius / P.innerRadius) +
     Real.log (P.rangeBound / ε)
 
-/-- The external result is an explicit hypothesis at every use. Its constants
+/-- The abstract solver proposition is an explicit hypothesis at every use. Its constants
 are uniform over dimensions, domains, objectives, oracles and accuracies. -/
 def Statement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∃ degree : ℕ,
@@ -82,5 +84,5 @@ def Statement : Prop :=
 
 end DPCut.LSW
 
-/-- Named external proposition for the conditional Theorem 1 development. -/
+/-- Named solver proposition for Theorem 1 in the assigned-cost model. -/
 def DPCut.LSWStatement : Prop := DPCut.LSW.Statement

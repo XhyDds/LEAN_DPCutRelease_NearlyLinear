@@ -54,7 +54,7 @@ theorem private_balanced_objectives : ∃ CA : ℝ, 0 < CA ∧ ∀ n, 2 ≤ n �
       ∃ M : Kernel (Weights n) (Finset (Fin n)), IsMarkovKernel M ∧ EdgeDP M p.epsilon p.delta ∧
         ∀ w, Nonnegative w → HighProbability (M w) (p.beta + τ)
           (BalancedObjectiveGuarantee w b c ρ p.gamma (CA * mainError n p)) := by
-  obtain ⟨CA, hCA, hrelease⟩ := theorem1_statistical
+  obtain ⟨CA, hCA, hrelease⟩ := theorem1_statistical_exists
   refine ⟨CA, hCA, ?_⟩
   intro n hn p hp b c ρ τ hb hb₁ hc hc₁ hρ hτ K hK hAlg
   obtain ⟨M, hM, hgraph, hDP, hu⟩ := hrelease n hn p hp

@@ -3,9 +3,10 @@ import DPCut.CCErrorBound
 import DPCut.Theorem30
 
 /-! Combined application guarantees. Each realization explicitly identifies the
-law of its costed program with the private kernel. Runtime coefficients are
+law of its costed program with the private kernel. Assigned-cost coefficients are
 uniform in n and the input graph; approximation constants retain the stronger
-uniformity specified in the corresponding statistical statements. -/
+uniformity specified in the corresponding statistical statements. These are
+bounds in the permissive cost model, not operational running-time certificates. -/
 set_option autoImplicit false
 set_option maxRecDepth 2048
 set_option maxHeartbeats 800000
@@ -119,7 +120,7 @@ theorem private_cc_reduction (hLSW : LSWStatement) {ε ξ ρ : ℝ}
         ((2:ℝ)^138*mainError n (ccParameters n γ ε)) ((n:ℝ)⁻¹^10) at hcost
     linarith
 
-/-- Theorem 30, now including runtime of the actual approximate implementation. -/
+/-- Theorem 30, now including assigned-cost bounds for the specified approximate program. -/
 theorem theorem30 (hLSW : LSWStatement) (baseline : CCBaselineFamily)
     {ρ ξ ε : ℝ} (hρ : 1 ≤ ρ) (hξ : 0 < ξ) (hε : 0 < ε) :
     ∃ C Cfail : ℝ, ∃ exponent : ℕ, 0 < C ∧ 0 < Cfail ∧
@@ -149,7 +150,7 @@ theorem private_correlation_clustering (hLSW : LSWStatement) (baseline : CCBasel
   convert h 1 (by norm_num) alg using 1
   norm_num
 
-/-- Corollary 31: error constants precede k, while runtime may depend on k. -/
+/-- Corollary 31: error constants precede k, while cost coefficients may depend on k. -/
 theorem corollary31 (hLSW : LSWStatement) (baseline : CCBaselineFamily)
     (ptas : ∀ k : ℕ, 2 ≤ k → ∀ slack : ℝ, 0 < slack → FixedKCCContract k slack (1/2))
     {ξ ε : ℝ} (hξ : 0 < ξ) (hε : 0 < ε) :
@@ -251,7 +252,7 @@ theorem theorem32 (hLSW : LSWStatement) {ξ ε : ℝ} (hξ : 0 < ξ) (hε : 0 < 
       (2*(ρ'+1)/(1+s))*((2:ℝ)^178*mainError n p) ≤ partitionCut w π at hc
     nlinarith
 
-/-- Corollary 3, with the Goemans--Williamson contract and actual runtime. -/
+/-- Corollary 3, with the Goemans--Williamson contract and assigned-cost bound. -/
 theorem private_max_cut (hLSW : LSWStatement) (gw : MaxKCutContract 2 (878/1000))
     {ξ ε : ℝ} (hξ : 0 < ξ) (hε : 0 < ε) :
     ∃ C Cfail : ℝ, ∃ exponent : ℕ, 0 < C ∧ 0 < Cfail ∧
@@ -273,7 +274,7 @@ instance postprocessKernel_markov {n : ℕ} {Y : Type} [MeasurableSpace Y]
     IsMarkovKernel (postprocessKernel F hn p hp K) :=
   ⟨fun _ => probability_bind _ _ K.measurable⟩
 
-/-- The general constrained-cut transfer, including runtime uniformly over
+/-- The general constrained-cut transfer, including assigned-cost bounds uniformly over
 all valid privacy and accuracy parameters. -/
 theorem constrained_cut_general (hLSW : LSWStatement)
     (alg : PolynomialGraphAlgorithm (fun n => Finset (Fin n))) :
@@ -351,7 +352,7 @@ theorem theorem34 (hLSW : LSWStatement)
   ring
 
 /-- Theorem 36, with one private approximate program carrying both the hierarchy
-guarantee and worst-case polynomial real-arithmetic runtime. -/
+guarantee and a polynomial bound in the assigned-cost model. -/
 theorem theorem36 (hLSW : LSWStatement) (o : InducedARVContract) :
     ∃ b' Cratio CA Cfail : ℝ, 0 < b' ∧ b' ≤ 1/3 ∧ 0 < Cratio ∧ 0 < CA ∧ 0 < Cfail ∧
     ∀ η : ℝ, ∀ (hη : 0 < η) (hη4 : η ≤ 1/4), ∃ Cadd : ℝ, 0 < Cadd ∧

@@ -41,7 +41,8 @@ import DPCut.MassClipping
 import DPCut.EllipsoidFeasibility
 
 /-! Lemmas 10–23, Theorem 38, and Theorem 1's statistical conclusion are proved.
-Theorem 1 and Appendix C runtime conclusions use the real-arithmetic LSW implementation. -/
+Theorem 1 and Appendix C cost conclusions use the LSW assigned-cost model;
+operational running time is not certified. -/
 #check DPCut.objective_gap
 #check DPCut.approximate_gaussian
 #check DPCut.tvClose_of_klDiv_bound
@@ -77,6 +78,7 @@ Theorem 1 and Appendix C runtime conclusions use the real-arithmetic LSW impleme
 #check DPCut.lemma23
 #check DPCut.parameter_choice
 #check DPCut.theorem1_statistical
+#check DPCut.theorem1_statistical_exists
 #check DPCut.costedFullRelease_law
 #check DPCut.fullCostBound_polynomial
 #check DPCut.theorem1

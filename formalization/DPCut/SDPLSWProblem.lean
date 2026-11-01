@@ -132,12 +132,6 @@ lemma answer_correct (P : LinearAlgebraPrimitives) (D : Weights n) (x : Space n)
     | some v =>
       exact psd_cut hn x v (P.witness_negative n (slack x) v h)
 
-def oracle (P : LinearAlgebraPrimitives) : LSW.Oracle (problem hn hlam hB) where
-  answer := answer P lam B
-  measurable_answer := measurable_answer P lam B
-  correct := answer_correct hn hlam hB P
-  charge := oracleCharge n
-
 lemma accurate_iff (ε : ℝ) (D : Weights n) (x : Space n) :
     LSW.Accurate (problem hn hlam hB) ε D x ↔ x ∈ body n ∧
       optimum lam (boundedObjective B D) - objective lam (boundedObjective B D) (lift x) ≤ ε := by

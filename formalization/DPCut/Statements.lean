@@ -182,9 +182,11 @@ def MainStatisticalStatement : Prop :=
       ∀ w : Weights n, Nonnegative w →
         HighProbability (M w) p.beta (fun h => AllCuts w h p.gamma (C * mainError n p))
 
-/-- Interface specifying programs, their output laws, and their costs.
-`realArithmeticLSWModel` instantiates it with the verified real-arithmetic
-implementation, conditional on LSW. Finite-bit complexity is outside this model. -/
+/-- Interface specifying programs, output laws and assigned costs.
+`realArithmeticLSWModel` supplies the approximate release and its cost accounting
+under the formal `LSWStatement` parameter. This interface does not derive costs
+from execution steps; it certifies neither operational real-arithmetic nor
+finite-bit running time. -/
 structure ComputationalModel where
   Program : Type
   realizes : ∀ n : ℕ, Program → Parameters → Kernel (Weights n) (Weights n) → Prop
@@ -193,8 +195,10 @@ structure ComputationalModel where
 def runtimeScale (n : ℕ) (p : Parameters) : ℝ :=
   1 + n + 1 / p.gamma + 1 / p.epsilon + Real.log (1 / p.delta) + Real.log (1 / p.beta)
 
-/-- Full `thm:main` after supplying a computational model; universal polynomial degree
-and coefficient are outside n, the parameters and the input graph. -/
+/-- Statistical guarantees plus a polynomial bound on the supplied model's cost.
+Universal degree and coefficient precede n, parameters and the input graph.
+Interpreting this as `thm:main`'s runtime requires an adequate execution semantics;
+the interface alone does not enforce one. -/
 def MainTheoremStatement (model : ComputationalModel) : Prop :=
   ∃ C Ctime : ℝ, ∃ degree : ℕ, ∃ program : model.Program, 0 < C ∧ 0 < Ctime ∧
   ∀ (n : ℕ), 2 ≤ n → ∀ p : Parameters, p.Valid →

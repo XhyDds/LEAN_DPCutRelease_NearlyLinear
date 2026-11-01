@@ -1,7 +1,7 @@
 import DPCut.CappedLSWRelease
 import DPCut.ApplicationLSWBounds
 
-/-! Uniform polynomial cost of the approximate capped release, with logarithmic
+/-! Uniform polynomial assigned cost of the approximate capped release, with logarithmic
 dependence on inverse privacy delta and failure probability. Correlation
 clustering is a specialization of the general certificate. -/
 set_option autoImplicit false
@@ -111,11 +111,11 @@ lemma cc_cost_polynomial (F : CuttingPlaneFamily) {γ ε : ℝ}
     PolynomialVertexBound (fun n => costBound F n (ccParameters n γ ε)) :=
   (cost_polynomial F).cc hγ hγ₁ hε
 
-/-- Lemma 29 with privacy, utility, support, and general runtime for one program. -/
+/-- Lemma 29 with privacy, utility, support, and general assigned-cost bounds for one program. -/
 theorem capped_release_of_lsw (hLSW : LSWStatement) :
     ∃ Ctime : ℝ, 0 < Ctime ∧ ∃ degree : ℕ,
     ∀ n (hn : 2 ≤ n) (p : Parameters) (hp : p.Valid) (D : Finset (Edge n)),
-      let F := cuttingPlaneFamily hLSW verifiedLinearAlgebra.primitives
+      let F := cuttingPlaneFamily hLSW verifiedLinearAlgebra
       DP (fun w w' => CappedOn D w ∧ CappedOn D w' ∧ Adjacent w w')
         (kernel F hn p hp D) p.epsilon p.delta ∧
       ∀ w : Weights n,
@@ -123,7 +123,7 @@ theorem capped_release_of_lsw (hLSW : LSWStatement) :
         (∀ᵐ h ∂(run F hn p hp D w).law, CappedOn D h) ∧
         (CappedOn D w → HighProbability (run F hn p hp D w).law p.beta
           (fun h => AllCuts w h p.gamma ((2:ℝ)^138 * mainError n p))) := by
-  let F := cuttingPlaneFamily hLSW verifiedLinearAlgebra.primitives
+  let F := cuttingPlaneFamily hLSW verifiedLinearAlgebra
   obtain ⟨C, hC, d, hcost⟩ := cost_polynomial F
   refine ⟨C, hC, d, fun n hn p hp D => ⟨run_private F hn p hp D, fun w => ?_⟩⟩
   exact ⟨(run_cost F hn p hp D w).trans (hcost n hn p hp), run_capped F hn p hp D w,

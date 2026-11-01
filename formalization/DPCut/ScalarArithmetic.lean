@@ -1,20 +1,18 @@
 import DPCut.MatrixPSDAlgorithm
 import DPCut.MatrixFactorAlgorithm
+import DPCut.Arithmetic
 
-/-! Deterministic operation-count semantics for scalar real arithmetic.
-Indexing, constants and structural rearrangement of data are free. Scalar
-operations/comparisons and each stored vector entry cost one operation. The
-algorithms below compose these operations, rather than assigning a price to
-an arbitrary matrix function. This is real-operation semantics, not bit cost. -/
+/-! Compositional scalar-operation counters for the concrete real routines.
+Indexing, constants and structural rearrangement are free in this convention;
+scalar operations/comparisons and each stored vector entry have counter one.
+The routines below compose these counters. `Arithmetic` itself remains a
+value/count pair and does not enforce the convention for arbitrary functions.
+These counters are not an operational execution semantics or a bit-cost model. -/
 set_option autoImplicit false
 noncomputable section
 open Matrix
 open scoped BigOperators
 namespace DPCut
-
-structure Arithmetic (α : Type) where
-  value : α
-  steps : ℕ
 
 namespace Arithmetic
 variable {α β : Type}

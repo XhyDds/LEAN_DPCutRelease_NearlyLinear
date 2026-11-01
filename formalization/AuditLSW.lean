@@ -1,7 +1,8 @@
 import DPCut.Theorem1LSW
 
 /-! LSW is a proposition parameter, never an axiom or an admitted theorem.
-The problem-specific reduction and the full release/runtime theorem are audited. -/
+The reduction and full release/assigned-cost theorem are audited. This does
+not establish that the cost model captures actual running time. -/
 #check DPCut.LSWStatement
 #check DPCut.LinearAlgebraPrimitives
 #check DPCut.theorem1_of_lsw
@@ -16,6 +17,9 @@ The problem-specific reduction and the full release/runtime theorem are audited.
 #print axioms DPCut.lsw_sdp
 #print axioms DPCut.SDPCoordinates.safeMatrix_val_primitive
 #print axioms DPCut.SDPCoordinates.solve_failure
+#print axioms DPCut.SDPCoordinates.solve_law
+#print axioms DPCut.SDPCoordinates.solve_cost
+#print axioms DPCut.cuttingPlaneFamily_implementation
 #print axioms DPCut.CuttingPlaneFamily.solve_failure
 #print axioms DPCut.full_sdp_magnitude_bounds
 #print axioms DPCut.solverCost_polynomial

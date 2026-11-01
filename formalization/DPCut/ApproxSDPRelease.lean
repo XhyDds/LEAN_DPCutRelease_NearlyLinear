@@ -56,6 +56,9 @@ theorem costedApproxRelease_law {n : ℕ} (sdp : ApproxSDPOracle) (hn : 2 ≤ n)
   apply OracleReplacement.costedFullRelease_law
   intro D r
   exact ApproxSDPCosted.witness_law sdp _ _ (approxConfig_bounds hn hp).eps_pos D r
+    (feasible_posDef hn (sdp.feasible n hn _ _
+      (by linarith [(approxConfig_bounds hn hp).lam_lower])
+      (approximationRadius_bounds (n := n) hp).1 (approximationRadius_bounds (n := n) hp).2 D))
 
 lemma measurable_approxRelease {n : ℕ} (sdp : ApproxSDPOracle) (hn : 2 ≤ n)
     (p : Parameters) (hp : p.Valid) : Measurable (fun w : Weights n => (costedApproxRelease sdp p w).law) := by

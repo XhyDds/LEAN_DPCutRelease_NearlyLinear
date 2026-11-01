@@ -12,7 +12,7 @@ namespace DPCut.LSWApplications
 
 /-- The same verified primitives and external LSW hypothesis as Theorem 1. -/
 def family (hLSW : LSWStatement) : CuttingPlaneFamily :=
-  cuttingPlaneFamily hLSW verifiedLinearAlgebra.primitives
+  cuttingPlaneFamily hLSW verifiedLinearAlgebra
 
 def costedCC (F : CuttingPlaneFamily) {n : ℕ} (hn : 2 ≤ n) (p : Parameters) (hp : p.Valid)
     (base solver : Weights n → CostedLaw (Partition n)) (w : Weights n) : CostedLaw (Partition n) :=

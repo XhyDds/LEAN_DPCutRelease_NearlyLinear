@@ -1,6 +1,7 @@
 import DPCut.ApproxSDPRelease
 
-/-! Worst-case polynomial runtime, including the requested optimizer accuracy. -/
+/-! Polynomial assigned-cost bounds, including the requested optimizer accuracy.
+The primitive contract does not connect these costs to execution steps. -/
 set_option autoImplicit false
 noncomputable section
 open scoped ENNReal
