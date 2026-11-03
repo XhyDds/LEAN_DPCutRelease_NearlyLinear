@@ -1,7 +1,7 @@
 import DPCut.ShrunkenCut
 
 /-!
-Lemma 19 (`lem:sdp_error`) of the root manuscript. The asymptotic error is made
+Lemma 19 (`lem:sdp_error`). The asymptotic error is made
 explicit with universal constant 2, for arbitrary signed edge weights.
 -/
 
@@ -81,7 +81,7 @@ theorem sdp_cut_bound {n : ℕ} (hn : 2 ≤ n) {lam : ℝ} (hlam : 0 ≤ lam)
   · nlinarith [mul_nonneg (sub_nonneg.mpr hcoef) hcut]
   · exact (le_of_not_ge hcut).trans (by positivity)
 
-/-- Lemma 19, with the exact existing target and the universal choice `C = 2`. -/
+/-- Lemma 19, with the universal choice `C = 2`. -/
 theorem lemma19 : SDPCertificateStatement := by
   refine ⟨2, by norm_num, ?_⟩
   intro n hn lam hlam D

@@ -1,6 +1,6 @@
 import DPCut.OracleReplacementMeasurable
 
-/-! Full release kernels and identification with the original exact mechanism. -/
+/-! Full release kernels and identification with the exact mechanism. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory

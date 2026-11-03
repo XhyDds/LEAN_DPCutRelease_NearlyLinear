@@ -90,7 +90,7 @@ lemma measurable_stepCharge {Y : Type*} [MeasurableSpace Y] [MeasurableSingleton
     (bottom : Y) (ell : ℝ) : Measurable (stepCharge bottom ell) :=
   Measurable.ite (measurableSet_singleton bottom) measurable_const measurable_const
 
-/-- A form of the manuscript's one-step moment estimate that does not require a positive
+/-- A form of the paper's one-step moment estimate that does not require a positive
 mass at the failure atom. `z` is the log density and its inverse density integrates to one. -/
 theorem success_charged_one_step {Y : Type*} [MeasurableSpace Y]
     [MeasurableSingletonClass Y] (μ : Measure Y) [IsProbabilityMeasure μ]

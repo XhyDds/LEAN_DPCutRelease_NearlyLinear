@@ -1,4 +1,3 @@
-import DPCut.ImplementedApplications
 import DPCut.Definitions
 import DPCut.Algorithms
 import DPCut.Privacy
@@ -9,8 +8,8 @@ import DPCut.Lemma10
 import DPCut.Lemma11
 import DPCut.Lemma12
 import DPCut.Lemma13
-import DPCut.Lemma15
 import DPCut.Lemma14
+import DPCut.Lemma15
 import DPCut.Lemma16
 import DPCut.Lemma17
 import DPCut.Lemma18
@@ -19,8 +18,14 @@ import DPCut.Lemma20
 import DPCut.Lemma21
 import DPCut.Lemma22
 import DPCut.Lemma23
-import DPCut.Theorem1Oracle
+import DPCut.MassClipping
+import DPCut.EllipsoidFeasibility
+import DPCut.CovarianceApproximation
+import DPCut.OptimizerTV
+import DPCut.Theorem1
+import DPCut.Theorem1Machine
 import DPCut.Theorem1LSW
+import DPCut.Theorem1Oracle
 import DPCut.Theorem38
 import DPCut.KLProjection
 import DPCut.CappedWaterfill
@@ -33,110 +38,16 @@ import DPCut.Theorem34
 import DPCut.Remark33
 import DPCut.Lemma35
 import DPCut.Theorem36
-import DPCut.AppendixRuntime
 import DPCut.PrivateBisection
-import DPCut.CovarianceApproximation
-import DPCut.OptimizerTV
-import DPCut.MassClipping
-import DPCut.EllipsoidFeasibility
+import DPCut.AppendixRuntime
+import DPCut.ImplementedApplications
 
-/-! Lemmas 10–23, Theorem 38, and Theorem 1's statistical conclusion are proved.
-Theorem 1 and Appendix C cost conclusions use the LSW assigned-cost model;
-operational running time is not certified. -/
-#check DPCut.objective_gap
-#check DPCut.approximate_gaussian
-#check DPCut.tvClose_of_klDiv_bound
-#check DPCut.approximateFindWitness_tv
-#check DPCut.MainStatisticalStatement
-#check DPCut.MainTheoremStatement
-#check DPCut.LowerBoundStatement
-#check DPCut.SuccessChargedStatement
-#check DPCut.advanced_composition_statement
-#check DPCut.lemma10
-#check DPCut.lemma11
-#check DPCut.lemma12
-#check DPCut.optimizer_foundations
-#check DPCut.matrixPairing_objectiveMatrix
-#check DPCut.lemma13
-#check DPCut.lemma15
-#check DPCut.lemma15_independent
-#check DPCut.lemma14
-#check DPCut.lemma14_density
-#check DPCut.lemma16
-#check DPCut.lemma17
-#check DPCut.lemma18
-#check DPCut.lemma19_shrunken
-#check DPCut.lemma19
-#check DPCut.lemma20
-#check DPCut.aggregate_privacy_and_utility
-#check DPCut.mw_potential_progress
-#check DPCut.lemma21
-#check DPCut.mass_from_cuts
-#check DPCut.residual_contraction
-#check DPCut.lemma22
-#check DPCut.cutRelease_nonnegative
-#check DPCut.lemma23
-#check DPCut.parameter_choice
-#check DPCut.theorem1_statistical
-#check DPCut.theorem1_statistical_exists
-#check DPCut.costedFullRelease_law
-#check DPCut.fullCostBound_polynomial
-#check DPCut.theorem1
-#check DPCut.ApproxSDPOracle
-#check DPCut.costedApproxRelease_law
-#check DPCut.approxRelease_tv
-#check DPCut.approxReleaseCostBound_polynomial
-#check DPCut.theorem1_exact_oracle
-#check DPCut.clipNoisyMass_eq_on_good
-#check DPCut.clipped_discrepancy_bound
-#check DPCut.EllipsoidMethod.feasible_of_balls
-#check DPCut.EllipsoidMethod.oracleCalls_le
-#check DPCut.EllipsoidMethod.ballIterationBudget_le
-#check DPCut.theorem38_explicit
-#check DPCut.theorem38
-#check DPCut.lemma28
-#check DPCut.kl_projection_existsUnique
-#check DPCut.capped_projection_waterfill
-#check DPCut.partition_transfer
-#check DPCut.cc_residual_transfer
-#check DPCut.theorem32
-#check DPCut.private_max_cut
-#check DPCut.theorem34
+/-!
+# Private cut release
 
-#check DPCut.lemma29_explicit
-#check DPCut.lemma29
-#check DPCut.theorem30
-#check DPCut.corollary31
-#check DPCut.private_correlation_clustering
-
-#check DPCut.remark33
-#check DPCut.lemma35
-
-#check DPCut.theorem36
-
-#check DPCut.private_balanced_objectives
-#check DPCut.private_bisection
-#check DPCut.hierarchy_reduction_runtime
-#check DPCut.cc_reduction_runtime
-#check DPCut.max_k_reduction_runtime
-#check DPCut.constrained_reduction_runtime
-
-#check DPCut.CappedLSW.run_private
-#check DPCut.CappedLSW.run_utility
-#check DPCut.CappedLSW.cc_cost_polynomial
-#check DPCut.LSWApplications.ccPrivateKernel_private
-#check DPCut.LSWApplications.ccPrivateKernel_utility
-#check DPCut.LSWApplications.postprocess_private
-#check DPCut.LSWApplications.constrained_utility
-#check DPCut.LSWApplications.max_k_utility
-#check DPCut.LSWApplications.hierarchy_utility
-
-#check DPCut.CappedLSW.capped_release_of_lsw
-#check DPCut.LSWApplications.theorem30
-#check DPCut.LSWApplications.corollary31
-#check DPCut.LSWApplications.private_correlation_clustering
-#check DPCut.LSWApplications.theorem32
-#check DPCut.LSWApplications.private_max_cut
-#check DPCut.LSWApplications.constrained_cut_general
-#check DPCut.LSWApplications.theorem34
-#check DPCut.LSWApplications.theorem36
+Root module of the Lean formalization of the paper "Polynomial-Time Differentially
+Private Synthetic Graph Release with Nearly-Linear Additive Error". It imports every
+module of the library. The main results are `DPCut.theorem1_machine` (Theorem 1),
+`DPCut.theorem38` (Theorem 38), `DPCut.lemma10` to `DPCut.lemma23`, and the
+Appendix C results; see `README.md`. `Audit.lean` checks their axioms and dependencies.
+-/

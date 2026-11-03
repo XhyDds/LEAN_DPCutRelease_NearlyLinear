@@ -1,9 +1,8 @@
 import DPCut.UtilityCalibration
 
 /-!
-Lemma 20 (`lem:gradient_estimation`) of `STOC2027.tex`.
-The existing aggregate-utility target is proved for the original algorithm,
-with the same oracle as Lemma 17 and explicit certificate constant 16.
+Lemma 20 (`lem:gradient_estimation`): utility of AggregateWitnesses, with the
+same oracle as Lemma 17 and explicit certificate constant 16.
 -/
 set_option autoImplicit false
 noncomputable section

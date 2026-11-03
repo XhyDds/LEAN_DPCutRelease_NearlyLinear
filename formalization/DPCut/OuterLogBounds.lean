@@ -88,7 +88,7 @@ lemma log_le_from_bound_div_sq {x C L γ : ℝ} (hx : 0 < x) (hC : 0 < C) (hL : 
   norm_num at hlog
   nlinarith
 
-/-- Specializations retained for callers using the main theorem's parameter range. -/
+/-- Specializations to the main theorem's parameter range. -/
 lemma core_log_bounds {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
     (p : Parameters) (hp : p.Valid) : CoreLogBounds n U p (logFactor n U p) := by
   exact core_log_bounds_general hn hU p hp.iterationValid

@@ -1,8 +1,7 @@
 import DPCut.SuccessChargedComposition
 
 /-!
-Lemma 16 (`lem:pay-what-you-get`) of the root manuscript: success-charged composition.
-The theorem proves the existing `SuccessChargedStatement` without changing its hypotheses.
+Lemma 16 (`lem:pay-what-you-get`): success-charged composition, `SuccessChargedStatement`.
 The auxiliary processes are used directly: their absolute continuity keeps them on common
 histories, and TV accumulation integrates conditional errors under the auxiliary histories.
 -/
@@ -14,7 +13,7 @@ open scoped ENNReal
 
 namespace DPCut
 
-/-- Success-charged composition, with the manuscript's exact constants:
+/-- Success-charged composition, with the paper's exact constants:
 `epsilon = 4 L + 4 ellStar log (1 / delta'')` and
 `delta = delta'' + (1 + exp epsilon) k delta'`. -/
 theorem lemma16 : SuccessChargedStatement := by

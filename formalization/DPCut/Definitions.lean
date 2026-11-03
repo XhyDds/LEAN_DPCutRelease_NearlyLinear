@@ -11,9 +11,10 @@ import Mathlib.Logic.Equiv.Option
 import Mathlib.Data.List.OfFn
 
 /-!
-Definitions for the current, uncommented `STOC2027.tex`.
-Every `...Statement` in this project is a proposition to be proved later,
-not an axiom or a theorem with an admitted proof. See PLAN.md for scope.
+Basic definitions: weighted graphs and cuts, probability and privacy predicates,
+SDP geometry, Gaussian and Laplace laws, clipping, witnesses, KL divergence,
+parameters, and the lower-bound scale. Each `...Statement` in this project is a
+definition of a proposition, not an axiom; most are proved in other modules.
 -/
 
 set_option autoImplicit false

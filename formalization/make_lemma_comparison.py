@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pair the current paper's statements with their existing Lean definitions.
+"""Pair the paper's statements with their Lean definitions.
 
 Run from any directory. Only LemmaComparison.tex is written. The extraction is
 specific to this manuscript and the declaration layout of this Lean project.
@@ -15,7 +15,7 @@ PAPER = ROOT.parent / "STOC2027.tex"
 OUTPUT = ROOT / "LemmaComparison.tex"
 
 # Keep this mapping explicit: declaration names alone do not establish that two
-# statements correspond. These associations follow PLAN.md and the source labels.
+# statements correspond. These associations follow the source labels.
 PAIRS = {
     "thm:main": ("Private relative cut release", "Statements", ["MainStatisticalStatement", "MainTheoremStatement"]),
     "cor:cc-intro": ("Private correlation clustering", "Applications", ["CorrelationClusteringStatement"]),
@@ -71,17 +71,25 @@ PROOF_DECLARATIONS = {
     "cor:cc-fixed-k": [("Theorem30", "corollary31")],
     "rem:maxcut-tightness": [("Remark33", "remark33")],
     "thm:lower_bound": [("Theorem38", "theorem38")],
+    "cor:maxcut-intro": [("Theorem32", "private_max_cut")],
+    "def:laplace-dist": [("LaplaceTail", "laplace_statement")],
+    "lem:pythagorean": [("KLPythagorean", "lemma28")],
+    "thm:private-max-k-cut": [("Theorem32", "theorem32")],
+    "thm:private-constrained-cut": [("Theorem34", "theorem34_transfer")],
+    "thm:private-hierarchical-clustering": [("Theorem36", "theorem36")],
 }
 
 # The strengthened statistical theorem names the mechanism directly; the
 # separate existential corollary still references MainStatisticalStatement.
 CONCRETE_PROOF_REFERENCES = {
     ("thm:main", "Theorem1", "theorem1_statistical"): ["fullReleaseLaw"],
+    ("def:laplace-dist", "LaplaceTail", "laplace_statement"): ["LaplaceStatement"],
 }
 
 # Combined implementation theorems strengthen the statistical targets above.
 # Their correspondence is explicit, rather than inferred from a target name.
 IMPLEMENTATION_DECLARATIONS = {
+    "thm:main": [("Theorem1Machine", "theorem1_machine")],
     "lem:capped-unit-release": [("CappedLSWRuntime", "capped_release_of_lsw")],
     "cor:cc-intro": [("ImplementedApplications", "private_correlation_clustering")],
     "cor:maxcut-intro": [("ImplementedApplications", "private_max_cut")],
@@ -101,7 +109,7 @@ BACKGROUND_RESULTS = {
 }
 
 APPLICATION_CONVENTION = (
-    r"The original Lean target records the statistical guarantee. The combined implementation theorem "
+    r"The statistical Lean statement records the guarantee. The combined implementation theorem "
     r"also provides a polynomial assigned-cost bound for the specified approximate program, using "
     r"the formal LSW parameter and cited external algorithm contracts. These interfaces allow "
     r"arbitrary kernels with cost zero; actual running times of the external algorithms and full "
@@ -116,8 +124,13 @@ NOTES = {
         r"\texttt{fullReleaseLaw}, bundling measurability, normalization, nonnegative "
         r"output, privacy and all-cut accuracy with constant $2^{166}$. "
         r"The first target is its existential corollary \texttt{theorem1\_statistical\_exists}. "
+        r"The combined implementation theorem \texttt{theorem1\_machine} names the ellipsoid-based "
+        r"program \texttt{TypedMachine.implementedRun}. It bundles measurability, normalization, "
+        r"nonnegative output, privacy and all-cut accuracy with constant $2^{178}$, together with "
+        r"polynomial instruction and optimization-call bounds for every execution. These counts are "
+        r"derived by the interpreters of the restricted machines, not entered as prices. "
         r"The second target adds a polynomial bound on the "
-        r"supplied model's cost. The current \texttt{theorem1\_of\_lsw} uses "
+        r"supplied model's cost. \texttt{theorem1\_of\_lsw} uses "
         r"\texttt{realArithmeticLSWModel} and the proposition parameter \texttt{LSWStatement}, "
         r"intended to specialize Lee--Sidford--Wong, Theorem~42 (arXiv:1508.04874v2). "
         r"Its \texttt{TimedAlgorithm} interface permits arbitrary measurable functions with "
@@ -130,10 +143,11 @@ NOTES = {
         r"scalar sampling and outer-block prices remain model conventions. The parameter ranges, "
         r"nonnegative output and simultaneous cut guarantee with logarithmic exponent $7$ match "
         r"the paper. The identity covariance fallback matches the implementation footnote and "
-        r"its failure probability is included in the total-variation budget. Neither actual "
-        r"polynomial runtime nor the footnote's sharper $\widetilde O(n^8)$ bound is certified "
-        r"by the current model. The notation appendix expands the interfaces and certificates. "
-        r"The older exact-SDP contract and the application contracts share the assigned-cost limitation."
+        r"its failure probability is included in the total-variation budget. The LSW cost model "
+        r"certifies neither actual polynomial runtime nor the footnote's sharper $\widetilde O(n^8)$ "
+        r"bound; \texttt{theorem1\_machine} certifies polynomial running time in its real-arithmetic "
+        r"machine model, not the sharper bound. The notation appendix expands the interfaces and certificates. "
+        r"The SDP-oracle contracts and the application contracts share the assigned-cost limitation."
     ),
     "cor:cc-intro": APPLICATION_CONVENTION + r" Here \texttt{id} allows up to $n$ clusters, so the optimum is unrestricted.",
     "cor:maxcut-intro": APPLICATION_CONVENTION + r" The ratio is $878/1000-\xi$, with at most two clusters.",
@@ -160,7 +174,7 @@ NOTES = {
     "rem:maxcut-tightness": r"The Lean theorem proves the remark's lower bound $B\geq\lfloor n/8\rfloor/100$ with the same parameter ranges, including $\varepsilon=0$, $\delta=0$, and $\beta=0$. The remark's explanatory argument is retained in the paper excerpt. No external algorithmic hypothesis is needed.",
     "thm:private-constrained-cut": r"The Lean statement is conditional on a release mechanism with additive error $A$ and on a nonprivate approximation kernel. It preserves the exact approximation factors and failure bound $\beta+\tau$. Instantiating the release with Theorem~\ref{thm:main} gives the paper's $A_\eta$. The combined general theorem instantiates the approximate LSW program and includes a uniform polynomial assigned-cost bound, subject to the cost-model limitation above. The application specialization additionally calibrates the error at $\delta=\beta=n^{-10}$.",
     "lem:hc-bicriteria-recursion": r"Lean expresses the recursive algorithm's hypothesis as properties of its output tree: \texttt{BalancedHierarchy} and \texttt{RecursiveApproximation}. The approximation constant may depend on $b$, and is quantified before $b'$, $a$, and the graph.",
-    "thm:private-hierarchical-clustering": r"The original Lean target records the statistical guarantee, with failure at most $C_{\rm fail}/n^2$. The combined theorem includes a polynomial realization using LSW and the weighted ARV contract. It evaluates the additive error at $\delta=\beta=n^{-10}$ and assumes $0<\varepsilon\leq1$, as in the paper. The additive coefficient may depend on $\eta$; the balance and ratio constants are universal. The second target is the deterministic hierarchy-transfer inequality used in the analysis.",
+    "thm:private-hierarchical-clustering": r"The statistical Lean statement records the guarantee, with failure at most $C_{\rm fail}/n^2$. The combined theorem includes a polynomial realization using LSW and the weighted ARV contract. It evaluates the additive error at $\delta=\beta=n^{-10}$ and assumes $0<\varepsilon\leq1$, as in the paper. The additive coefficient may depend on $\eta$; the balance and ratio constants are universal. The second target is the deterministic hierarchy-transfer inequality used in the analysis.",
     "lem:ekkl-discrepancy": r"Simple graphs are encoded by binary edge weights. The maximum-over-disjoint-sets conclusion is expressed by the existence of disjoint finite sets attaining the required lower bound.",
     "thm:lower_bound": r"\texttt{lowerScale} explicitly treats $\gamma=0$ by using $n^{3/2}/\varepsilon$ for the minimum. The universal lower-bound constant is quantified before all parameters; the displayed proof chooses $c=2^{-30}$.",
 }
@@ -216,9 +230,9 @@ CONTEXT = [
     ("Approximation budgets", "ApproximationTransfer", ["precisionParameters", "implementationTV"]),
     ("Public optimizer precision", "ApproxSDPPrecision", ["approximationBudget", "approximationRadius"]),
     ("Nonnegative-output post-processing", "ApproxSDPRelease", ["positiveWeights"]),
-    ("Current LSW release program and real-arithmetic model", "Theorem1LSW", [
+    ("LSW release program and its cost model", "Theorem1LSW", [
         "Program", "Program.run", "model", "realArithmeticLSWImplementationModel", "realArithmeticLSWModel"]),
-    ("Legacy exact-SDP contract (historical interface)", "CostedProgram", ["ExactSDPOracleCost"]),
+    ("Exact-SDP oracle contract", "CostedProgram", ["ExactSDPOracleCost"]),
     ("Finite KL and capped support", "Definitions", ["discreteMeasure"]),
     ("Finite KL and capped support (continued)", "Applications", ["CappedOn", "IsDistribution", "finiteKL"]),
     ("Partitions and application objectives", "Applications", [
@@ -303,6 +317,9 @@ def declaration(module, name):
 
 def theorem_signature(code):
     boundary = re.search(r" :=(?:[ \t]*by\b|[ \t]*\n)", code)
+    if not boundary:
+        # One-line term-mode proof, e.g. `theorem theorem32 : S := private_max_k`.
+        boundary = re.search(r" := \S[^\n]*$", code)
     if not boundary:
         raise ValueError("Cannot locate theorem proof boundary")
     return code[:boundary.start()].rstrip()
@@ -405,9 +422,9 @@ __LITERATE__
 \begin{document}
 \maketitle
 This document pairs every active theorem, corollary, lemma, proposition,
-numbered definition, and remark in \SourceId{STOC2027.tex} with its existing Lean counterpart.
-The paper statements are extracted from the current manuscript, excluding
-comments and disabled material. The Lean definitions are copied from the current
+numbered definition, and remark in \SourceId{STOC2027.tex} with its Lean counterpart.
+The paper statements are extracted from the manuscript source, excluding
+comments and disabled material. The Lean definitions are copied from the
 \SourceId{DPCut/} files, not paraphrased. Source locations accompany both versions.
 
 Each \texttt{def ...Statement : Prop} defines a proposition; it is not itself a
@@ -419,10 +436,11 @@ statements; it does not re-run or certify Lean proofs.
 Cited and standard background lemmas are marked below and included for statement
 comparison. Proving their full generality within this project is not required
 to validate this paper's contributions. External hypotheses used by the
-formalized proofs remain explicit. Cost conclusions bound assigned counters and
-reported times. The current interfaces do not derive these from execution steps:
-in particular, \texttt{TimedAlgorithm} permits any measurable function at time
-zero. The formal LSW and application contracts therefore do not certify actual
+formalized proofs remain explicit. Apart from \texttt{theorem1\_machine}, whose
+operation counts are derived from program execution in a real RAM model, cost
+conclusions bound assigned counters and reported times. These interfaces do not
+derive costs from execution steps: in particular, \texttt{TimedAlgorithm} permits
+any measurable function at time zero. The formal LSW and application contracts therefore do not certify actual
 polynomial running time, even in the real-arithmetic model.
 
 Paper statement and algorithm references retain the manuscript's numbering.

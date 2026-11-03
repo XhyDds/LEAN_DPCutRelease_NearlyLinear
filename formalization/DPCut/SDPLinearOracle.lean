@@ -3,7 +3,7 @@ import DPCut.LSWStatement
 
 /-! Matrix objective certificates and the semantic linear-algebra interface.
 `VerifiedLinearAlgebra.lean` constructs this interface from scalar elimination
-and proves the operation counts used by the current LSW theorem. -/
+and proves the operation counts used by the LSW-based theorem. -/
 set_option autoImplicit false
 noncomputable section
 open Matrix MeasureTheory
@@ -12,7 +12,7 @@ namespace DPCut
 
 /-- Semantic interface for a measurable negative quadratic-form witness.
 It can be supplied by a caller, or constructed by `MatrixElimination.primitives`.
-The current main theorem uses the latter verified implementation. -/
+`theorem1_of_lsw` uses the latter verified implementation. -/
 structure LinearAlgebraPrimitives where
   psdWitness : ∀ n, Mat n → Option (Fin n → ℝ)
   measurable_psdWitness : ∀ n, Measurable (psdWitness n)

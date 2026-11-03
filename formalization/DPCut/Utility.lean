@@ -82,13 +82,6 @@ def ResidualContractionStatement : Prop :=
     0 < γ → γ ≤ 1 / 4 → 0 ≤ B → 10 * B ≤ mass w → mass w ≤ mass h →
     mass (residualUpdate w a.residual) ≤ (19 / 20 : ℝ) * mass w
 
-def RetirementStatement : Prop :=
-  ∀ (n T : ℕ) (a : ℕ → Weights n) (r : Fin T → Weights n),
-    a 0 = 1 → (∀ t : Fin T, IsMask (r t)) →
-    (∀ t : Fin T, a (t.val + 1) = residualUpdate (a t.val) (r t)) →
-    ∀ e, (∑ t : Fin T, a t.val e * r t e) = 1 - a T e ∧
-      (∑ t : Fin T, a t.val e * r t e) ≤ 1
-
 /-- Unnumbered numerical bridge in the main proof. Feasibility is indispensable. -/
 def ObjectiveGapStatement : Prop :=
   ∀ (n : ℕ), 2 ≤ n → ∀ (lam μ : ℝ), 0 < lam → 0 < μ → μ ≤ 1 / 2 →
@@ -103,27 +96,5 @@ def ApproximateGaussianStatement : Prop :=
     frobenius ((CFC.sqrt Xstar)⁻¹ * (X - Xstar) * (CFC.sqrt Xstar)⁻¹) ≤ μ →
     InformationTheory.klDiv (gaussianBatch X k) (gaussianBatch Xstar k) ≤
       ENNReal.ofReal (k * μ ^ 2 / 2)
-
-/-- Measurability/normalization bridge from the ideal law to mathlib Markov kernels. -/
-def AlgorithmLawsStatement (c : Constants) : Prop :=
-  ∀ (n : ℕ), 2 ≤ n → ∀ (U : ℝ), 1 ≤ U → ∀ p : Parameters, p.Valid →
-    ∃ K : Kernel (Weights n) (Weights n), IsMarkovKernel K ∧
-      (∀ w, Nonnegative w → K w = cutReleaseLaw U p c w) ∧ GraphValued K
-
-/-- Explicit positivity and stopping-budget obligations hidden by the paper's Theta choices. -/
-def CoreParameterBoundsStatement (c : Constants) : Prop :=
-  ∀ (n : ℕ), 2 ≤ n → ∀ (U : ℝ), 1 ≤ U → ∀ p : Parameters, p.Valid →
-    let cfg := runConfig n U p c
-    0 < cfg.T1 ∧ 0 < cfg.T2 ∧ 0 < cfg.oracle.K ∧ 0 < cfg.oracle.k ∧
-    0 < cfg.eps2 ∧ 0 < cfg.epsGE ∧ cfg.epsGE < 1 ∧
-    0 < cfg.deltaGE ∧ cfg.deltaGE < 1 ∧ 0 < cfg.betaGE ∧ cfg.betaGE < 1 ∧
-    4 < cfg.oracle.lam ∧ n * U ≤ cfg.B ∧
-    10 * (cfg.B + cfg.tau2 / p.gamma) ≤ cfg.stop
-
-/-- All core proof obligations share one choice of constants. No part is assumed proved. -/
-def CoreObligationsStatement : Prop :=
-  ∃ c : Constants, c.Positive ∧ CoreParameterBoundsStatement c ∧ AlgorithmLawsStatement c ∧
-    AggregatePrivacyStatement c ∧ AggregateUtilityStatement c ∧ MainPrivacyStatement c ∧
-    InnerRoundStatement c ∧ OuterRoundStatement c ∧ BoundedUtilityStatement c
 
 end DPCut

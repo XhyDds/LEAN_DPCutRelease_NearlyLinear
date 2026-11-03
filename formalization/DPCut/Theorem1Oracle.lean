@@ -1,12 +1,12 @@
 import DPCut.ApproxSDPRuntime
 
 /-!
-Theorem 1 in the explicitly requested costed real-arithmetic oracle model.
-The main entry point uses a feasible approximate optimizer with a requested
-objective gap and an explicit polynomial cost in dimension and logarithmic
-inverse accuracy. Gaussian/vector block costs remain those of `CostedProgram`.
-The former exact-oracle result is retained as `theorem1_exact_oracle`.
-Neither version asserts a finite-bit or arithmetic-only SDP implementation.
+Theorem 1 in an assigned-cost real-arithmetic model with an external SDP solver.
+`theorem1` uses a feasible approximate optimizer with a requested objective gap
+and an assigned polynomial cost in the dimension and the logarithmic inverse
+accuracy; `theorem1_exact_oracle` uses an exact optimizer. Gaussian and vector
+block costs are those of `CostedProgram`. Neither version provides an SDP
+implementation.
 -/
 set_option autoImplicit false
 noncomputable section

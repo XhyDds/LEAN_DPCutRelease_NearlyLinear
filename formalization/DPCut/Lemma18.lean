@@ -3,8 +3,8 @@ import DPCut.OuterLoopPrivacy
 import DPCut.MainPrivacyCalibration
 
 /-!
-Lemma 18 (`lem:main-privacy`) of the root manuscript: the original CutRelease
-law is `(epsilon, delta)`-differentially private. All composition, sampling,
+Lemma 18 (`lem:main-privacy`): the CutRelease law is
+`(epsilon, delta)`-differentially private. All composition, sampling,
 measurability, support, and calibration obligations are discharged below.
 -/
 
@@ -70,8 +70,7 @@ theorem cutRelease_private {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
   rw [he_total, hd_total] at hres
   exact hres
 
-/-- Lemma 18, proving the pre-existing main privacy statement with the same constants
-used for Lemma 17. No composition theorem is assumed. -/
+/-- Lemma 18, with the constants of Lemma 17. No composition theorem is assumed. -/
 theorem lemma18 : MainPrivacyStatement privacyConstants := by
   intro n hn U hU p hp w w' hw s hs
   exact (cutRelease_private hn hU p hp w w' hw.2.2).1 s hs

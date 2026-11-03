@@ -137,7 +137,7 @@ theorem lemma14 : GaussianPrivacyStatement := by
   intro n k _hn _hk X Y hX hY δ hδ hδhalf hd
   exact gaussian_privacy hX hY hδ hδhalf hd
 
-/-- The product-of-densities inequalities as displayed in the manuscript. -/
+/-- The product-of-densities inequalities as displayed in the paper. -/
 theorem lemma14_density {n k : ℕ}
     {X Y : Mat n} (hX : X.PosDef) (hY : Y.PosDef)
     {δ : ℝ} (hδ : 0 < δ) (hδhalf : δ < 1 / 2) (hd : covarianceDistance X Y < 1 / 2) :

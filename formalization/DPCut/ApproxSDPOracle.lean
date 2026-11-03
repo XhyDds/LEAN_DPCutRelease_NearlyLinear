@@ -1,10 +1,10 @@
 import DPCut.OracleReplacementLaw
 
-/-! Explicit approximate optimization primitive for the existing real-arithmetic
-model. Accuracy is requested through a normalized objective-gap tolerance.
-The cost contract remains uniform in the real objective data, as in the former
-exact-oracle model, and now charges for log inverse accuracy. It is not an
-assertion that LSW supplies this uniform contract or a finite-bit implementation. -/
+/-! An external approximate SDP solver, as a contract for the assigned-cost model.
+Accuracy is requested through a normalized objective-gap tolerance. The assigned
+cost is uniform in the real objective data and logarithmic in the inverse accuracy.
+It is not an assertion that LSW supplies this contract or a finite-bit
+implementation. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory

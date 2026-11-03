@@ -1,6 +1,8 @@
 import DPCut.LaplaceDensity
+import DPCut.Statements
 
-/-! Exact one-sided Laplace tail bounds used by Lemma 20. -/
+/-! Exact Laplace tail probabilities, used by Lemma 20, and the properties in
+Definition 5 (`def:laplace-dist`). -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory Set
@@ -71,5 +73,37 @@ lemma laplace_calibrated_tails {ε β : ℝ} (hε : 0 < ε) (hβ : 0 < β) (hβ1
   change prob (laplace (1 / ε)) (Ioi (-τ)) ≤ prob (laplace (1 / ε)) (Ici (-τ)) at hm
   change prob (laplace (1 / ε)) (Iic (-τ)) + prob (laplace (1 / ε)) (Ioi (-τ)) = 1 at hc
   exact ⟨hτ, hu, by linarith⟩
+
+/-- Definition 5: the Laplace law is a probability measure with two-sided tail `exp (-t/b)`. -/
+theorem laplace_statement : LaplaceStatement := by
+  intro b hb
+  haveI := laplace_isProbabilityMeasure hb
+  refine ⟨inferInstance, fun t ht => ?_⟩
+  rcases ht.eq_or_lt with rfl | ht
+  · simp [prob]
+  have hset : {x : ℝ | t ≤ |x|} = Iic (-t) ∪ Ici t := by
+    ext x
+    simp only [mem_setOf_eq, mem_union, mem_Iic, mem_Ici]
+    constructor
+    · intro h
+      rcases le_abs.mp h with h | h
+      · exact Or.inr h
+      · exact Or.inl (by linarith)
+    · rintro (h | h)
+      · exact le_abs.mpr (Or.inr (by linarith))
+      · exact le_abs.mpr (Or.inl h)
+  have hdisj : Disjoint (Iic (-t)) (Ici t) := by
+    rw [Set.disjoint_left]
+    intro x h1 h2
+    simp only [mem_Iic, mem_Ici] at h1 h2
+    linarith
+  have hIci : prob (laplace b) (Ici t) = prob (laplace b) (Ioi t) := by
+    rw [prob_laplace_eq_integral hb measurableSet_Ici, prob_laplace_eq_integral hb measurableSet_Ioi,
+      integral_Ici_eq_integral_Ioi]
+  rw [hset, prob, measure_union hdisj measurableSet_Ici,
+    ENNReal.toReal_add (measure_ne_top _ _) (measure_ne_top _ _)]
+  change prob (laplace b) (Iic (-t)) + prob (laplace b) (Ici t) = _
+  rw [hIci, laplace_lower_tail hb ht.le, laplace_upper_tail hb ht.le]
+  ring
 
 end DPCut

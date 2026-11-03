@@ -2,8 +2,7 @@ import DPCut.GaussianWitness
 import DPCut.Statements
 
 /-!
-Lemma 10 (`lem:chi`) of the current root manuscript `STOC2027.tex`.
-The theorem proves the existing `ChiStatement`, with universal constant `C = 96`.
+Lemma 10 (`lem:chi`): `ChiStatement`, with universal constant `C = 96`.
 Only its Gaussian, chi-square, union-bound, and clipping prerequisites are used.
 -/
 
@@ -99,7 +98,7 @@ lemma chiGood_failure_bound {n : ℕ} (hn : 2 ≤ n) {X : Mat n} (hX : X ∈ fea
     _ = (Fintype.card (Edge n) : ℝ) * (2 * Real.exp (-(k : ℝ) / 32)) := by simp
     _ ≤ _ := by nlinarith [Real.exp_pos (-(k : ℝ) / 32)]
 
-/-- The manuscript's logarithmic batch-size condition, with an explicit universal constant. -/
+/-- The paper's logarithmic batch-size condition, with an explicit universal constant. -/
 lemma chi_sampleSize_bound (n k : ℕ) (hn : 2 ≤ n) (β δ : ℝ)
     (hβ : 0 < β) (hβ1 : β < 1) (hδ : 0 < δ) (hδ1 : δ < 1)
     (hk : 96 * Real.log ((n : ℝ) / (β * δ)) ≤ k) :
@@ -128,9 +127,9 @@ lemma chi_sampleSize_bound (n k : ℕ) (hn : 2 ≤ n) (β δ : ℝ)
   rw [he] at hm
   exact hm.trans (le_min (by nlinarith) (by nlinarith))
 
-/-- **Lemma 10**, exactly the previously declared target, now proved with `C = 96`.
+/-- **Lemma 10**, with `C = 96`.
 The samples are independent by `gaussianBatch`; `βχ, δ₁ ∈ (0,1)`, `n ≥ 2`, and
-`k > 0` make explicit the domain assumptions used in the manuscript. -/
+`k > 0` make explicit the domain assumptions used in the paper. -/
 theorem lemma10 : ChiStatement := by
   refine ⟨96, by norm_num, ?_⟩
   intro n hn X hX βχ δ₁ hβ hβ1 hδ hδ1 k hk hsize

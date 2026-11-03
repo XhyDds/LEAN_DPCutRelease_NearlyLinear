@@ -3,7 +3,7 @@ import DPCut.ReleaseCalibration
 import DPCut.ReleaseNonnegative
 
 /-!
-Lemma 23 (`lem:utility`) of the current root manuscript: simultaneous relative
+Lemma 23 (`lem:utility`): simultaneous relative
 cut accuracy for the actual bounded CutRelease law, with a uniform coefficient.
 The constants and algorithm are the same as in Lemma 22.
 -/
@@ -26,7 +26,7 @@ theorem bounded_cut_release_utility {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 �
   intro h hgood
   exact ⟨hgood.1, hgood.2.mono_error (release_error_bound hn hU p hp)⟩
 
-/-- **Lemma 23**, with the unchanged target and the universal choice `C = 2^121`. -/
+/-- **Lemma 23**, with the universal choice `C = 2^121`. -/
 theorem lemma23 : BoundedUtilityStatement outerUtilityConstants := by
   refine ⟨(2 : ℝ) ^ 121, by positivity, ?_⟩
   intro n hn U hU p hp w hw

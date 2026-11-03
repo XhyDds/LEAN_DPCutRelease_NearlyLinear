@@ -1,7 +1,7 @@
 import DPCut.SDPArithmeticData
 
 /-! The LSW separation/first-order oracle implemented by counted scalar
-operations and verified elimination, with the existing public oracle charge. -/
+operations and verified elimination, within the public oracle charge. -/
 set_option autoImplicit false
 noncomputable section
 open Matrix

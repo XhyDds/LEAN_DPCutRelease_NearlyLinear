@@ -112,8 +112,8 @@ lemma witness_probability (D r : Weights n) (X : FeasibleMatrix n) :
   · letI := approximateTrialLaw_probability o he D X.val
     exact repeatUntil_probability _ (measurable_acceptTrial_fixed o r) _
 
-/-- Sample an approximate covariance once, then use the original finite witness
-trials. Failure still returns a feasible fallback covariance. -/
+/-- Sample an approximate covariance once, then run the finite witness trials.
+Failure still returns a feasible fallback covariance. -/
 def run (S : Weights n → CostedLaw (FeasibleMatrix n)) (B : ℝ) (D r : Weights n) :
     CostedLaw (Option (Weights n)) :=
   .charge (vectorBlockCost n) (if r = 0 then .pure none else

@@ -1,7 +1,7 @@
 import DPCut.MassEstimateUtility
 import DPCut.NoisyMassPrivacy
 
-/-! Public mass clipping is inactive on the existing utility good event and
+/-! Public mass clipping is inactive on the utility good event and
 provides a deterministic bound for the numerical optimization instances. -/
 set_option autoImplicit false
 noncomputable section

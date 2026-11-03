@@ -1,7 +1,7 @@
 import DPCut.Definitions
 
 /-! Ideal real-valued probability semantics of Algorithms 1--4. These are definitions,
-not executable finite-bit implementations. Measurability and normalization are proof targets. -/
+not executable finite-bit implementations. Measurability and normalization are proved separately. -/
 set_option autoImplicit false
 
 noncomputable section

@@ -102,7 +102,7 @@ theorem outer_budget_bounds_general {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 �
       apply div_le_div_of_nonneg_right _ he.le
       nlinarith [sq_nonneg L]
 
-/-- Specializations retained for callers using the main theorem's parameter range. -/
+/-- Specializations to the main theorem's parameter range. -/
 theorem outer_budget_bounds {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
     (p : Parameters) (hp : p.Valid) {L : ℝ} (hL : CoreLogBounds n U p L) :
     OuterBudgetBounds p (runConfig n U p outerUtilityConstants) L := by

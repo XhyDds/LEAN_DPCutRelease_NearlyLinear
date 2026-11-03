@@ -1,8 +1,8 @@
 import DPCut.CappedEstimate
 import DPCut.CappedProgress
 
-/-! Rejected inner iterations in the capped mechanism retain the original
-potential decrement after projection. -/
+/-! Rejected inner iterations in the capped mechanism keep the potential
+decrement of the uncapped analysis after projection. -/
 set_option autoImplicit false
 noncomputable section
 open scoped BigOperators

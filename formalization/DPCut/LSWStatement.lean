@@ -8,7 +8,7 @@ arXiv:1508.04874v2, Theorem 42 (Section 10.1). It is a proposition parameter,
 not an added axiom. The exact-oracle, bounded-domain concave-maximization
 specialization retains oracle charges and logarithmic geometry/accuracy terms.
 
-The current `TimedAlgorithm` interface supplies completion-time labels and
+The `TimedAlgorithm` interface supplies completion-time labels and
 compatible timeout laws, but does not derive them from execution steps or
 oracle calls. Arbitrary measurable functions can be represented at time zero.
 Consequently this specification does not certify an operational LSW runtime,

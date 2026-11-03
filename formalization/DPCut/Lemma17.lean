@@ -3,9 +3,9 @@ import DPCut.PublicOracleCalibration
 import DPCut.Statements
 
 /-!
-Lemma 17 (`lem:gradient_privacy`) of the root manuscript. The theorem concerns
-the original `aggregateLaw`, with explicit universal constants in its public
-configuration. Auxiliary conditioning and transcripts occur only in the proof.
+Lemma 17 (`lem:gradient_privacy`). The theorem concerns `aggregateLaw`, with
+explicit universal constants in its public configuration. Auxiliary conditioning
+and transcripts occur only in the proof.
 -/
 
 set_option autoImplicit false
@@ -107,7 +107,7 @@ theorem aggregate_privacy_calibrated {n : ℕ} (hn : 2 ≤ n) (o : OracleConfig)
   rw [hediv] at hp
   exact hp.mono hE hfinal
 
-/-- Lemma 17, proving the pre-existing statement for explicit universal constants. -/
+/-- Lemma 17, for explicit universal constants. -/
 theorem lemma17 : AggregatePrivacyStatement privacyConstants := by
   intro n hn ε δ β γ hε hε1 hδ hδ1 hβ hβ1 hγ hγ1 h _ w w' hw s hs
   have ho := public_oracle_privacy_bounds hn hε hε1 hδ hδ1 hβ hβ1

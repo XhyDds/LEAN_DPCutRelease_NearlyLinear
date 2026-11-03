@@ -4,7 +4,7 @@ import DPCut.LowerCalibration
 import DPCut.Statements
 
 /-!
-Theorem 38, the active `thm:lower_bound` in STOC2027.tex.
+Theorem 38 (`thm:lower_bound`).
 The discrepancy estimate is proved directly for a complete bipartite bit family;
 the external EKKL discrepancy statement is not an assumption of this proof.
 -/
@@ -61,7 +61,7 @@ theorem theorem38_explicit {n : ℕ} (hn : 33 ≤ n) {ε δ β γ A : ℝ}
     norm_num
     nlinarith
 
-/-- Theorem 38 with precisely the original target and no additional assumptions. -/
+/-- Theorem 38, with no assumptions beyond those of the paper. -/
 theorem theorem38 : LowerBoundStatement := by
   refine ⟨1 / 2 ^ 30, by norm_num, ?_⟩
   intro n hn ε δ β γ A hε hε1 hδ hδε _hβ0 hβ hγ hγ1 hA M hM _hgraph hDP hacc

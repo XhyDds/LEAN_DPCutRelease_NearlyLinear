@@ -1,4 +1,5 @@
-import DPCut.CappedInnerUtility
+import DPCut.CappedInnerLoop
+import DPCut.InnerLoopUtility
 import DPCut.InnerReleaseUtility
 
 /-! Joint success, contraction and all-cut accuracy of the capped inner loop. -/

@@ -1,6 +1,6 @@
 import DPCut.AggregateTranscript
 
-/-! Identification of the padded oracle transcript with the original aggregate loop. -/
+/-! Identification of the padded oracle transcript with the aggregate loop. -/
 
 set_option autoImplicit false
 noncomputable section

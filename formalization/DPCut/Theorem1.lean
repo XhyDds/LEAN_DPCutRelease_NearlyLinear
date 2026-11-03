@@ -2,8 +2,8 @@ import DPCut.FullReleasePrivacy
 import DPCut.FullReleaseUtility
 
 /-!
-The complete statistical conclusion of Theorem 1 for the actual full release law.
-The separate computational-model target also requires an implementation and cost proof.
+The complete statistical conclusion of Theorem 1 for `fullReleaseLaw`, which uses
+exact SDP optimizers. `Theorem1Machine` adds an implementation with a running-time bound.
 -/
 set_option autoImplicit false
 noncomputable section

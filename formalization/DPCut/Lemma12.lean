@@ -2,9 +2,8 @@ import DPCut.PreprocessUtility
 import DPCut.Statements
 
 /-!
-Lemma 12 (`lem:preprocess`) of the current root manuscript. Only the noisy
-excess vector is released; the clipped component stays private. The exact
-thresholds and the original inventory statement are unchanged.
+Lemma 12 (`lem:preprocess`). Only the noisy excess vector is released; the
+clipped component stays private. The thresholds are those of the paper.
 -/
 set_option autoImplicit false
 noncomputable section

@@ -1,6 +1,6 @@
 import DPCut.InnerUtilityCalibration
 
-/-! Explicit outer-round constants; the oracle constants are unchanged. -/
+/-! Explicit outer-round constants; the oracle constants are those of Lemma 20. -/
 set_option autoImplicit false
 noncomputable section
 namespace DPCut
@@ -64,7 +64,7 @@ theorem outerConfig_inner_utility_bounds_general {n : ℕ} (hn : 2 ≤ n) {U : �
   exact lemma20 n hn U c.epsGE c.deltaGE c.betaGE p.gamma (by linarith) heG heG1 hdG hdG1
     hbG hbG1 hγ (by linarith) w h hw hh
 
-/-- Specializations retained for callers using the main theorem's parameter range. -/
+/-- Specializations to the main theorem's parameter range. -/
 theorem outerConfig_inner_utility_bounds {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
     (p : Parameters) (hp : p.Valid) :
     InnerUtilityBounds n U p (runConfig n U p outerUtilityConstants) := by

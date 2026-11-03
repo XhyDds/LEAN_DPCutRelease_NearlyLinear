@@ -15,7 +15,7 @@ lemma main_outer_horizon_pos {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U) :
   have hprod : 1 < (n : ℝ) * U := by nlinarith
   simpa using Real.log_pos hprod
 
-/-- The manuscript's per-inner-loop advanced-composition budget, including all
+/-- The paper's per-inner-loop advanced-composition budget, including all
 positivity hypotheses needed by the oracle and the square root. -/
 lemma main_composition_budget {k m : ℕ} (hk : 0 < k) (hm : 0 < m)
     {ε δ : ℝ} (hε : 0 < ε) (hε1 : ε ≤ 1) (hδ : 0 < δ) (hδ1 : δ < 1) :

@@ -1,7 +1,7 @@
 import DPCut.MaxCutBlockPrivacy
 
 /-! Remark 33's unweighted approximate-DP Max-Cut lower bound, with the exact
-statement and constants of the manuscript. -/
+statement and constants of the paper. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory

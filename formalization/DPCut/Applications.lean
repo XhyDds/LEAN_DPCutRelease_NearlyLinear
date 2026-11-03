@@ -138,7 +138,7 @@ def MaxCutLowerBoundStatement : Prop :=
       (fun S => ρ * sSup (Set.range (cut w)) - B ≤ cut w S)) →
     ((n / 8 : ℕ) : ℝ) / 100 ≤ B
 
-/-! The following targets make the paper's soft-O and "with high probability"
+/-! The following statements make the paper's soft-O and "with high probability"
 conventions explicit: C*n*(log n)^d and failure at most Cfail/n^2. These are
 statistical statements; the external algorithms' efficiency remains a separate dependency. -/
 
@@ -190,7 +190,7 @@ def PrivateMaxKStatement : Prop :=
         ρ * maxKOptimum w k ≤ ∫ π, partitionCut w π ∂algorithm n w) →
       PrivateMaxKGuarantee C Cfail ε (ρ - ξ) exponent k
 
-/-- `cor:maxcut-intro`, a specialization of the preceding target. -/
+/-- `cor:maxcut-intro`, a specialization of the preceding statement. -/
 def PrivateMaxCutStatement : Prop :=
   ∀ (ξ ε : ℝ), 0 < ξ → 0 < ε → ∃ C Cfail : ℝ, ∃ exponent : ℕ,
     0 < C ∧ 0 < Cfail ∧ PrivateMaxKGuarantee C Cfail ε (878 / 1000 - ξ) exponent 2

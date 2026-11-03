@@ -138,7 +138,7 @@ lemma totalPSD_none {n : ℕ} (M : Mat n) (hM : M.IsHermitian) :
     | none => rfl
     | some v => exact False.elim ((not_lt_of_ge (hp.2 v)) (totalPSD_negative M v h))
 
-/-- The previous external semantic interface now has a proved implementation.
+/-- The linear-algebra interface, implemented by scalar elimination.
 Operation counts are supplied separately by the arithmetic refinement. -/
 def primitives : LinearAlgebraPrimitives where
   psdWitness _ := totalPSD

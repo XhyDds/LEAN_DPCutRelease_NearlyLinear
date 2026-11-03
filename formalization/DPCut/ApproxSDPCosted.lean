@@ -2,7 +2,7 @@ import DPCut.ApproxSDPOracle
 import DPCut.OracleReplacementCost
 import DPCut.VerifiedGaussianSampling
 
-/-! One approximate solve followed by the original Gaussian/Laplace attempts. -/
+/-! One approximate solve followed by the Gaussian/Laplace attempts of FindWitness. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory

@@ -2,7 +2,7 @@ import DPCut.InnerUtilityCalibration
 import DPCut.MassClipping
 
 /-!
-Lemma 21 (`lem:inner_round`) of the current root manuscript.
+Lemma 21 (`lem:inner_round`).
 The probability is joint over the mass release and all adaptive inner calls.
 -/
 set_option autoImplicit false
@@ -113,7 +113,7 @@ theorem innerRound_utility {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 0 ≤ U)
       exact zero_le _
   simpa only [add_comm] using hb
 
-/-- **Lemma 21**, with Lemma 20's constants and the existing joint-probability statement. -/
+/-- **Lemma 21**, with Lemma 20's constants; the probability bound is joint. -/
 theorem lemma21 : InnerRoundStatement utilityConstants := by
   intro n hn U hU p hp w a hw ha
   exact innerRound_utility hn (by linarith) p _ (runConfig_inner_utility_bounds_general hn hU p hp)

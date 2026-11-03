@@ -77,7 +77,7 @@ theorem private_cc_reduction {ε ξ ρ : ℝ} (hε : 0 < ε) (hξ : 0 < ξ) (hρ
     linarith
 
 /-- Theorem 30, relative only to the explicitly cited private baseline. The
-nonprivate approximation is already an argument of the original target. -/
+nonprivate approximation algorithm is quantified in `CCBlackBoxStatement` itself. -/
 theorem theorem30 (baseline : CCBaselineFamily) : CCBlackBoxStatement := by
   intro ρ ξ ε hρ hξ hε
   obtain ⟨C, Cfail, d, hC, hCfail, hreduce⟩ :=

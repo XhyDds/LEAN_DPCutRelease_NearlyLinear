@@ -1,7 +1,7 @@
 import DPCut.Optimizer
 
 /-!
-Lemma 13 (`lem:stability_of_optimizer`) in the current root `STOC2027.tex`.
+Lemma 13 (`lem:stability_of_optimizer`).
 Only this lemma and its immediate optimizer prerequisites are proved here.
 -/
 

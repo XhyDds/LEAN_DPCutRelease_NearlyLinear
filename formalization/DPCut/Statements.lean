@@ -2,20 +2,15 @@ import DPCut.Algorithms
 import Mathlib.Algebra.MvPolynomial.Eval
 import Mathlib.Algebra.MvPolynomial.Degrees
 
-/-! Unproved proof targets, with source labels. No theorem or axiom is asserted. -/
+/-! Lean statements of the paper's results, with their source labels. These are
+definitions of propositions, not assertions. Most are proved in other modules; the
+README lists the background lemmas that are only stated. -/
 set_option autoImplicit false
 
 noncomputable section
 open MeasureTheory ProbabilityTheory
 open scoped BigOperators ENNReal MatrixOrder
 namespace DPCut
-
-/-- Foundational obligations implicit in §3.2. -/
-def FeasibleGeometryStatement : Prop :=
-  ∀ n : ℕ, 2 ≤ n →
-    IsCompact (feasible n) ∧ Convex ℝ (feasible n) ∧ (1 : Mat n) ∈ feasible n ∧
-    ∀ X ∈ feasible n, X.PosDef ∧ 0 < X.det ∧ Real.log X.det ≤ 0 ∧
-      ∀ e, 1 / (2 * (n : ℝ)) ≤ fractionalQuery X e ∧ fractionalQuery X e ≤ 1
 
 def OptimizerStatement : Prop :=
   ∀ (n : ℕ), 2 ≤ n → ∀ (lam : ℝ), 0 < lam → ∀ D : Weights n,
@@ -77,15 +72,7 @@ def ChaosStatement : Prop :=
       {z | ChiGood X z ∧ pairing D (clippedWitness z) ≥ pairing D (fractionalQuery X) / 2} /
       prob (gaussianBatch X k) {z | ChiGood X z}
 
-/-- Stronger joint event actually established in Appendix B, useful before adaptive conditioning. -/
-def ChaosJointStatement : Prop :=
-  ∃ C : ℝ, 0 < C ∧ ∀ (n : ℕ), 2 ≤ n → ∀ (D : Weights n) X,
-  X ∈ feasible n → ∀ (k : ℕ), 0 < k → C * Real.log n ≤ k →
-    (1 / 648 : ℝ) ≤ prob (gaussianBatch X k)
-      {z | UnclippedGood X z ∧ pairing D (clippedWitness z) ≥ pairing D (fractionalQuery X) / 2}
-
-/-- `lem:gaussian-privacy`, equivalent log-density-ratio formulation.
-The current source assumes `δ₁ < 1/2`; the previous target used `δ₁ < 1`. -/
+/-- `lem:gaussian-privacy`, equivalent log-density-ratio formulation. -/
 def GaussianPrivacyStatement : Prop :=
   ∃ C : ℝ, 0 < C ∧ ∀ (n k : ℕ), 0 < n → 0 < k →
   ∀ (X₀ X₁ : Mat n), X₀.PosDef → X₁.PosDef →
@@ -107,7 +94,7 @@ def ChiSquareTailStatement : Prop :=
     prob (standardGaussian k)
       {z | (∑ i, z i ^ 2) / k ∉ Set.Icc (1 / 2 : ℝ) 2} ≤ 2 * Real.exp (-c * k)
 
-/-- `lem:hypercontractivity`, using the existing extended Lp seminorm. -/
+/-- `lem:hypercontractivity`, using mathlib's extended Lp seminorm `eLpNorm`. -/
 def HypercontractivityStatement : Prop :=
   ∀ (m : ℕ) (P : MvPolynomial (Fin m) ℝ), P.totalDegree ≤ 2 →
     eLpNorm (fun z => MvPolynomial.eval z P) 4 (standardGaussian m) ≤
@@ -208,7 +195,7 @@ def MainTheoremStatement (model : ComputationalModel) : Prop :=
         model.cost n program p w ≤ ENNReal.ofReal (Ctime * runtimeScale n p ^ degree) ∧
         HighProbability (M w) p.beta (fun h => AllCuts w h p.gamma (C * mainError n p))
 
-/-- Current active `thm:lower_bound` at line 4333; NOT the older version inside `junk`. -/
+/-- `thm:lower_bound`. -/
 def LowerBoundStatement : Prop :=
   ∃ c : ℝ, 0 < c ∧ ∀ (n : ℕ), 33 ≤ n → ∀ (ε δ β γ A : ℝ),
   0 < ε → ε < 1 → 0 ≤ δ → δ ≤ ε / 100 → 0 < β → β ≤ 1 / 40 →

@@ -1,10 +1,9 @@
 import DPCut.WitnessQuadratic
 
 /-!
-Lemma 11 (`lem:chaos`) of `STOC2027.tex`.
-We prove the existing `ChaosStatement`, using `C = 512` and `c₀ = 1/2048`.
+Lemma 11 (`lem:chaos`): `ChaosStatement`, with `C = 512` and `c₀ = 1/2048`.
 The proof uses exact Gaussian moments and the spectral theorem in place of
-the manuscript's general hypercontractivity theorem.
+the paper's general hypercontractivity lemma.
 -/
 set_option autoImplicit false
 noncomputable section
@@ -102,7 +101,7 @@ theorem chaos_joint_success {n : ℕ} (hn : 2 ≤ n) (k : ℕ) (hk : 0 < k)
   change (1 / 2048 : ℝ) ≤ prob (gaussianBatch X k) t
   linarith
 
-/-- **Lemma 11**, with the original signed weights and conditioning event.
+/-- **Lemma 11**, for signed weights and the paper's conditioning event.
 No unproved hypercontractivity or moment statement is assumed. -/
 theorem lemma11 : ChaosStatement := by
   refine ⟨512, 1 / 2048, by norm_num, by norm_num, ?_⟩

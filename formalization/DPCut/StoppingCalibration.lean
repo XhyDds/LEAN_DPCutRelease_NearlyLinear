@@ -1,6 +1,6 @@
 import DPCut.OuterBudgetBounds
 
-/-! A universal stopping coefficient satisfying the manuscript's displayed threshold. -/
+/-! A universal stopping coefficient satisfying the paper's displayed threshold. -/
 set_option autoImplicit false
 noncomputable section
 namespace DPCut
@@ -157,7 +157,7 @@ theorem outer_stopping_threshold_general {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU 
   norm_num
   nlinarith
 
-/-- Specializations retained for callers using the main theorem's parameter range. -/
+/-- Specializations to the main theorem's parameter range. -/
 lemma outer_oracle_size_bounds {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
     (p : Parameters) (hp : p.Valid) {L : ℝ} (hL : CoreLogBounds n U p L) :
     let c := runConfig n U p outerUtilityConstants

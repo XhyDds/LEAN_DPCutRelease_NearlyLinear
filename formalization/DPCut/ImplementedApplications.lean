@@ -120,7 +120,7 @@ theorem private_cc_reduction (hLSW : LSWStatement) {ε ξ ρ : ℝ}
         ((2:ℝ)^138*mainError n (ccParameters n γ ε)) ((n:ℝ)⁻¹^10) at hcost
     linarith
 
-/-- Theorem 30, now including assigned-cost bounds for the specified approximate program. -/
+/-- Theorem 30, including assigned-cost bounds for the specified approximate program. -/
 theorem theorem30 (hLSW : LSWStatement) (baseline : CCBaselineFamily)
     {ρ ξ ε : ℝ} (hρ : 1 ≤ ρ) (hξ : 0 < ξ) (hε : 0 < ε) :
     ∃ C Cfail : ℝ, ∃ exponent : ℕ, 0 < C ∧ 0 < Cfail ∧

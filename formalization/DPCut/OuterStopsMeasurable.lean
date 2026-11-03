@@ -1,7 +1,7 @@
 import DPCut.Lemma21
 import DPCut.OuterLoopMeasurable
 
-/-! Measurable probability semantics for the existing stopping flag. -/
+/-! Measurable probability semantics for the stopping flag. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory ProbabilityTheory

@@ -1,7 +1,7 @@
 import DPCut.OracleReplacementLaw
 import DPCut.CostedProgramBounds
 
-/-! Existing real-arithmetic block costs with a replaceable, costed witness implementation. -/
+/-! Assigned real-arithmetic block costs with a replaceable, costed witness implementation. -/
 set_option autoImplicit false
 noncomputable section
 open MeasureTheory

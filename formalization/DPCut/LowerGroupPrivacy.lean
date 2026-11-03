@@ -49,7 +49,7 @@ lemma EdgeDP.group {n : ℕ} {M : Kernel (Weights n) (Weights n)} [IsMarkovKerne
     exact (div_le_one hkr).2 hd
   simpa only [hp0, hpk] using hp.path hδ p k hn hadj s hs
 
-/-- The manuscript's floor choice, including its endpoint and approximate-DP budgets. -/
+/-- The paper's floor choice, including its endpoint and approximate-DP budgets. -/
 lemma lower_group_parameters {ε δ : ℝ} (hε : 0 < ε) (hε1 : ε < 1)
     (hδ : 0 ≤ δ) (hδε : δ ≤ ε / 100) :
     ∃ t : ℕ, 0 < t ∧ 1 / (2 * ε) ≤ (t : ℝ) ∧ (t : ℝ) * ε ≤ 1 ∧

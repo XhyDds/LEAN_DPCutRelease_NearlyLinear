@@ -72,7 +72,7 @@ def successCharge {Y : Type*} (bottom : Y) (ell : ℕ → List Y → ℝ) (h : L
 
 /-- `lem:pay-what-you-get`, for one neighboring pair. N must be measurable kernels.
 The budget holds under the auxiliary process (not just under the actual process).
-Applying this pairwise for every adjacent input gives the manuscript's DP conclusion. -/
+Applying this pairwise for every adjacent input gives the paper's DP conclusion. -/
 def SuccessChargedStatement : Prop :=
   ∀ (Y : Type) [MeasurableSpace Y] [StandardBorelSpace Y] [Inhabited Y],
   ∀ (bottom : Y) (P₀ P₁ N₀ N₁ : Sequential Y) (k : ℕ)
@@ -91,14 +91,5 @@ def SuccessChargedStatement : Prop :=
     let ε := 4 * L + 4 * ellStar * Real.log (1 / δ'')
     Indistinguishable (sequentialLaw P₀ k) (sequentialLaw P₁ k)
       ε (δ'' + (1 + Real.exp ε) * k * δ')
-
-/-- Unnumbered finite-implementation bridge at the end of the main proof. -/
-def TVPrivacyTransferStatement : Prop :=
-  ∀ (X Y : Type) [MeasurableSpace Y],
-  ∀ (adj : X → X → Prop) (M M' : X → Measure Y) (ε δ ν : ℝ),
-    (∀ x, IsProbabilityMeasure (M x) ∧ IsProbabilityMeasure (M' x)) →
-    0 ≤ ε → 0 ≤ δ → 0 ≤ ν → DP adj M ε δ →
-    (∀ x, TVClose (M x) (M' x) ν) →
-    DP adj M' ε (δ + (1 + Real.exp ε) * ν)
 
 end DPCut

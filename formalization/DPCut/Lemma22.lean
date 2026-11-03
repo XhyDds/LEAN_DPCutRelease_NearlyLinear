@@ -2,9 +2,9 @@ import DPCut.OuterHorizon
 import DPCut.StoppingCalibration
 
 /-!
-Lemma 22 (`lem:outer_round`) of the current root manuscript. The original
-`OuterRoundStatement` is proved with explicit universal constants, including
-the stopping calibration; there is no additional threshold hypothesis.
+Lemma 22 (`lem:outer_round`). `OuterRoundStatement` is proved with explicit
+universal constants, including the stopping calibration; there is no additional
+threshold hypothesis.
 -/
 set_option autoImplicit false
 noncomputable section
@@ -33,7 +33,7 @@ theorem outerRound_utility {n : ℕ} (hn : 2 ≤ n) {U : ℝ} (hU : 1 ≤ U)
   congr 1
   ring
 
-/-- **Lemma 22**, with the original target and an explicit universal calibration. -/
+/-- **Lemma 22**, with an explicit universal calibration. -/
 theorem lemma22 : OuterRoundStatement outerUtilityConstants := by
   intro n hn U hU p hp w hw
   exact outerRound_utility hn hU p _ (outerConfig_inner_utility_bounds_general hn hU p hp)
